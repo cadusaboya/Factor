@@ -1,10 +1,5 @@
 from rest_framework import serializers
-from .models import Message, User
-
-class MessageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Message
-        fields = ['id', 'text']
+from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

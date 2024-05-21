@@ -13,16 +13,12 @@ export default function CreateAccount() {
   
     const API_URL = 'https://factor-cadusaboya.loca.lt';
 
-    const handleButtonPress = (menu: string) => {
-        console.log(`Navigating to ${menu}`);
-        navigation.navigate(menu); // Navigate to the desired screen
-  };
     
     const handleLogin = async (data) => { // Accept data as argument
       try {
         const res = await axios.post(`${API_URL}/login/`, data); // Use data object directly
        // Check if login was successful
-      if (res.data.success) {
+      if (res.data.message === "Login successful") {
         // Navigate to the main screen or perform other actions
         navigation.navigate('Home');
         Alert.alert('Login successful');
@@ -64,7 +60,7 @@ export default function CreateAccount() {
       <ButtonSolid
               title={'Entrar'}
               useColor={'rgb(0, 0, 0)'}
-              onPress={() => handleButtonPress('Home')} // handleSubmit(onSubmit)
+              onPress={handleSubmit(onSubmit)}
         />
       </View>
     </View>
