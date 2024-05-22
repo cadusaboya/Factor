@@ -1,46 +1,44 @@
 import * as React from 'react';
 import { Text, View, StyleSheet, TextInput, Alert } from 'react-native';
-import {ButtonSolid} from 'react-native-ui-buttons';
+import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
 import Constants from 'expo-constants';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
-
 export default function CreateAccount() {
-    const { register, setValue, handleSubmit, errors } = useForm(); // Added handleSubmit here
-    const navigation = useNavigation();
+  const { register, setValue, handleSubmit, errors } = useForm();
+  const navigation = useNavigation();
   
-    const API_URL = 'https://factor-cadusaboya.loca.lt';
-
-    
-    const handleLogin = async (data) => { // Accept data as argument
-      try {
-        const res = await axios.post(`${API_URL}/login/`, data); // Use data object directly
-       // Check if login was successful
+  const API_URL = 'https://factor-cadusaboya.loca.lt';
+  
+  const handleLogin = async (data) => {
+    try {
+      const res = await axios.post(`${API_URL}/login/`, data);
       if (res.data.message === "Login successful") {
+        // Store the JWT token securely (e.g., in AsyncStorage or Redux state)
+        const token = res.data.token;
+        console.log('Token:', token);
         // Navigate to the main screen or perform other actions
         navigation.navigate('Home');
         Alert.alert('Login successful');
       } else {
-        // Display error message to the user
         Alert.alert('Invalid username or password');
       }
-      } catch (error) {
-        console.error('Error during login:', error);
-        // Display generic error message to the user
-        Alert.alert('An error occurred during login');
-      }
-    };
+    } catch (error) {
+      console.error('Error during login:', error);
+      Alert.alert('An error occurred during login');
+    }
+  };
   
-    const onSubmit = (data) => { // Accept data as argument
-      handleLogin(data); // Pass data to handleCreateUser function
-    };
+  const onSubmit = (data) => {
+    handleLogin(data);
+  };
   
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <Text style={styles.label} >Usuário</Text>
+        <Text style={styles.label}>Usuário</Text>
         <TextInput
           style={styles.input}
           onChangeText={text => setValue('username', text)}
@@ -50,17 +48,17 @@ export default function CreateAccount() {
       <View style={styles.box}>
         <Text style={styles.label}>Senha</Text>
         <TextInput
-            style={styles.input}
-            onChangeText={(text) => setValue('password', text)}
-            secureTextEntry={true}
+          style={styles.input}
+          onChangeText={(text) => setValue('password', text)}
+          secureTextEntry={true}
         />
       </View>
 
       <View style={styles.but}>
-      <ButtonSolid
-              title={'Entrar'}
-              useColor={'rgb(0, 0, 0)'}
-              onPress={handleSubmit(onSubmit)}
+        <ButtonSolid
+          title={'Entrar'}
+          useColor={'rgb(0, 0, 0)'}
+          onPress={handleSubmit(onSubmit)}
         />
       </View>
     </View>
@@ -72,7 +70,6 @@ const styles = StyleSheet.create({
     margin: 20,
     marginLeft: 0,
   },
-
   box: {
     marginHorizontal: 30,
   },

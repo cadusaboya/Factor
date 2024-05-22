@@ -5,6 +5,11 @@ from django.contrib.auth import authenticate
 from django.middleware.csrf import get_token
 from .models import User
 from .serializers import UserSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 
 @api_view(['POST'])
 def login_view(request):
@@ -19,10 +24,10 @@ def login_view(request):
 
     user = authenticate(request, username=username, password=password)
     if user is not None:
-        # Optionally, you can add a session or token creation logic here if needed
+        refresh = RefreshToken.for_user(user)
         response_data = {
             'message': 'Login successful',
-            'csrf_token': get_token(request),  # Including CSRF token for future requests
+            'token': str(refresh.access_token),
         }
         return Response(response_data, status=status.HTTP_200_OK)
     else:
