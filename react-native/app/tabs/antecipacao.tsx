@@ -84,7 +84,7 @@ export default function Tab1Screen() {
         </View>
 
         <View style={styles.box}>
-          <WhiteBox width={350} height={tasks.length * 58 + 40}>
+          <WhiteBox width={350} height={tasks.length * 45}>
             <Text style={styles.textBox}>{tasks.length} antecipações disponíveis </Text>
             <Divider />
             <ScrollView>
