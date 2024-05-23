@@ -11,6 +11,6 @@ urlpatterns = [
     path('user-cash/', views.user_cash_view, name='user_cash'),
     path('tasks/', views.user_tasks_view, name='user-tasks'),
     path('update-tasks/', views.update_tasks, name='update_tasks'),
-    path('transactions/', views.create_transaction, name='create_transaction'),
+    path('transactions/', views.transactions_view, name='create_transaction'),
     path('admin/', admin.site.urls),
 ]

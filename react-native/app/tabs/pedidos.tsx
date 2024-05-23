@@ -1,15 +1,37 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert, Image } from 'react-native';
-import { Text, Divider } from '@rneui/themed';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import WhiteBox from '@/components/whiteBox';
+import axios from 'axios';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Tab2Screen() {
+  const [transactions, setTransactions] = useState([]);
+  const API_URL = 'https://factor-cadusaboya.loca.lt';
+  const { token } = useAuth();
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        // Fetch transactions from the backend
+        const response = await axios.get(`${API_URL}/transactions/`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        setTransactions(response.data);
+      } catch (error) {
+        console.error('Failed to fetch transactions:', error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
 
   return (
     <View style={styles.container}>
       <ScrollView>
         <View>
-            <Text style={styles.head}>Histórico</Text>
+          <Text style={styles.head}>Histórico</Text>
         </View>
 
         <View style={styles.box}>
@@ -29,36 +51,22 @@ export default function Tab2Screen() {
               </View>
             </View>
             
-            <View style={styles.row}>
-              <View style={[styles.cell, styles.date]}>
-                <Text>12/05/24</Text>
+            {transactions.map((transaction) => (
+              <View key={transaction.id} style={styles.row}>
+                <View style={[styles.cell, styles.date]}>
+                  <Text>{transaction.date}</Text>
+                </View>
+                <View style={[styles.cell, styles.antecipado]}>
+                  <Text>R$ {transaction.antecipado}</Text>
+                </View>
+                <View style={[styles.cell, styles.recebido]}>
+                  <Text>R$ {transaction.recebido}</Text>
+                </View>
+                <View style={styles.cell}>
+                  <Text>{transaction.status}</Text>
+                </View>
               </View>
-              <View style={[styles.cell, styles.antecipado]}>
-                <Text>R$ 5.000</Text>
-              </View>
-              <View style={[styles.cell, styles.recebido]}>
-                <Text>R$ 4.700</Text>
-              </View>
-              <View style={styles.cell}>
-                <Text>Em Análise</Text>
-              </View>
-            </View>
-
-            <View style={styles.row}>
-              <View style={[styles.cell, styles.date]}>
-                <Text>10/05/24</Text>
-              </View>
-              <View style={[styles.cell, styles.antecipado]}>
-                <Text>R$ 12.000</Text>
-              </View>
-              <View style={[styles.cell, styles.recebido]}>
-                <Text>R$ 11.280</Text>
-              </View>
-              <View style={styles.cell}>
-                <Text>Completo</Text>
-              </View>
-
-            </View>
+            ))}
           </WhiteBox>
         </View>
       </ScrollView>
