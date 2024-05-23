@@ -2,13 +2,14 @@ import * as React from 'react';
 import { Text, View, StyleSheet, TextInput, Alert } from 'react-native';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
-import Constants from 'expo-constants';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
 
 export default function CreateAccount() {
-  const { register, setValue, handleSubmit, errors } = useForm();
+  const { register, setValue, handleSubmit, errors } = useForm(); 
   const navigation = useNavigation();
+  const { login } = useAuth();
   
   const API_URL = 'https://factor-cadusaboya.loca.lt';
   
@@ -18,6 +19,7 @@ export default function CreateAccount() {
       if (res.data.message === "Login successful") {
         // Store the JWT token securely (e.g., in AsyncStorage or Redux state)
         const token = res.data.token;
+        await login(token); // Store the token using the login function from useAuth
         console.log('Token:', token);
         // Navigate to the main screen or perform other actions
         navigation.navigate('Home');

@@ -1,15 +1,16 @@
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.contrib.auth import authenticate
-from django.middleware.csrf import get_token
+from rest_framework import status # type: ignore
+from rest_framework.decorators import api_view # type: ignore
+from rest_framework.response import Response # type: ignore
+from django.contrib.auth import authenticate # type: ignore
+from django.middleware.csrf import get_token # type: ignore
 from .models import User
 from .serializers import UserSerializer
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.decorators import api_view, permission_classes # type: ignore
+from rest_framework.response import Response # type: ignore
+from rest_framework import status # type: ignore
+from django.contrib.auth import authenticate # type: ignore
+from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
 def login_view(request):
@@ -43,3 +44,9 @@ def register_view(request):
         return Response(response_data, status=status.HTTP_201_CREATED)
     else:
         return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Add IsAuthenticated permission here
+def user_cash_view(request):
+    user_cash = request.user.cash  # Assuming profile is related to the user model
+    return Response({'cash': user_cash})
