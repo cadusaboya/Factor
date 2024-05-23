@@ -5,31 +5,29 @@ import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios'; // or fetch API if you prefer
+import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function Tab1Screen() {
   const navigation = useNavigation();
   const API_URL = 'https://factor-cadusaboya.loca.lt';
-  const { token } = useAuth(); // Retrieve the token using the useAuth hook
+  const { token } = useAuth();
 
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [checkboxStates, setCheckboxStates] = useState([]);
+
   const incompleteTasks = tasks.filter(task => !task.is_completed);
 
   useEffect(() => {
     // Fetch tasks from the backend
     const fetchTasks = async () => {
       try {
-        const response = await axios({
-          method: 'GET',
-          url: "https://factor-cadusaboya.loca.lt/tasks/",
+        const response = await axios.get(`${API_URL}/tasks/`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-        console.log('Tasks from backend:', response.data); // Log tasks received from backend
         setTasks(response.data);
         setCheckboxStates(new Array(response.data.length).fill(false));
         setLoading(false);
@@ -40,7 +38,7 @@ export default function Tab1Screen() {
     };
 
     fetchTasks();
-  }, []);
+  }, [API_URL, token]);
 
   const handleCheckboxChange = (index) => {
     setCheckboxStates((prevStates) => {
@@ -56,72 +54,127 @@ export default function Tab1Screen() {
     }, 0);
   };
 
-  const handleButtonPress = () => {
-    Alert.alert(
-      'Sucesso',
-      'Em breve o dinheiro será enviado para sua conta',
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-            navigation.goBack(); // or navigation.navigate('Home') if 'Home' is the name of the main page
+  const handleButtonPress = async () => {
+    try {
+      // Filter out tasks where checkbox is checked based on incomplete tasks
+      const tasksToComplete = incompleteTasks.filter((task, index) => checkboxStates[index]);
+      if (!tasksToComplete.length) {
+        Alert.alert('No tasks selected', 'Please select at least one task to confirm anticipation.');
+        return;
+      }
+  
+      // Log tasksToComplete to debug
+      console.log('Tasks to complete:', tasksToComplete);
+  
+      // Extract the IDs of the tasks to complete
+      const taskIds = tasksToComplete.map(task => task.id);
+      console.log('Task IDs to complete:', taskIds);
+  
+      // Update tasks to set is_completed to true
+      await axios.post(`${API_URL}/update-tasks/`, { tasks: taskIds }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      // Create a transaction for each task
+      await Promise.all(tasksToComplete.map(async (task) => {
+        // Log the data before sending the request
+        console.log("Transaction data:", {
+          task: task.id,
+          date: new Date().toISOString().split('T')[0],
+          antecipado: task.value,
+          recebido: (task.value * 0.94).toFixed(2),
+          status: 'Em Análise'
+        });
+      
+        // Send the request
+        await axios.post(`${API_URL}/transactions/`, {
+          task: task.id,
+          date: new Date().toISOString().split('T')[0],
+          antecipado: task.value,
+          recebido:(task.value * 0.94).toFixed(2),
+          status: 'Em Análise'
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }));
+  
+      // Handle success
+      Alert.alert(
+        'Sucesso',
+        'Em breve o dinheiro será enviado para sua conta',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              navigation.navigate("Home"); // or navigate to another screen
+            },
           },
-        },
-      ]
-    );
+        ]
+      );
+    } catch (error) {
+      // Handle error
+      console.error('Failed to confirm anticipation:', error);
+      Alert.alert('Erro', 'Não foi possível confirmar a antecipação. Por favor, tente novamente.');
+    }
   };
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
+
+
   return (
     <View style={styles.container}>
-        <View style={styles.box}>
-          <WhiteBox width={350} height={100}>
-            <Text style={styles.textBox}>Saldo sendo antecipado: </Text>
-            <Divider />
-            <Text style={styles.text}>R$ {calculateResult()}</Text>
-          </WhiteBox>
-        </View>
+      <View style={styles.box}>
+        <WhiteBox width={350} height={100}>
+          <Text style={styles.textBox}>Saldo sendo antecipado: </Text>
+          <Divider />
+          <Text style={styles.text}>R$ {calculateResult()}</Text>
+        </WhiteBox>
+      </View>
 
-        <View style={styles.box}>
-          <WhiteBox width={350} height={360}>
-            <Text style={styles.textBox}>{incompleteTasks.length} antecipações disponíveis </Text>
-            <Divider />
-            <ScrollView>
+      <View style={styles.box}>
+        <WhiteBox width={350} height={360}>
+          <Text style={styles.textBox}>{incompleteTasks.length} antecipações disponíveis </Text>
+          <Divider />
+          <ScrollView>
             {incompleteTasks.map((task, index) => (
-            <View key={task.id} style={styles.option}>
-              <Checkbox
-                style={styles.checkbox}
-                value={checkboxStates[index]}
-                onValueChange={() => handleCheckboxChange(index)}
-                color={checkboxStates[index] ? 'green' : undefined}
-              />
-              <Text numberOfLines={2} ellipsizeMode="tail" style={styles.textMargin}>
-                {task.name}
-              </Text>
-            </View>
+              <View key={task.id} style={styles.option}>
+                <Checkbox
+                  style={styles.checkbox}
+                  value={checkboxStates[index]}
+                  onValueChange={() => handleCheckboxChange(index)}
+                  color={checkboxStates[index] ? 'green' : undefined}
+                />
+                <Text numberOfLines={2} ellipsizeMode="tail" style={styles.textMargin}>
+                  {task.name}
+                </Text>
+              </View>
             ))}
-            </ScrollView>
-          </WhiteBox>
-        </View>
+          </ScrollView>
+        </WhiteBox>
+      </View>
 
-        <View style={styles.box}>
-          <WhiteBox width={350} height={100}>
-            <Text style={styles.textBox}>Valor a ser creditado na conta: </Text>
-            <Divider />
-            <Text style={styles.text}>R$ {(calculateResult() * 0.94).toFixed(2)}</Text>
-          </WhiteBox>
-        </View>
+      <View style={styles.box}>
+        <WhiteBox width={350} height={100}>
+          <Text style={styles.textBox}>Valor a ser creditado na conta: </Text>
+          <Divider />
+          <Text style={styles.text}>R$ {(calculateResult() * 0.94).toFixed(2)}</Text>
+        </WhiteBox>
+      </View>
 
-        <View style={styles.but}>
-          <ButtonSolid
-            title={'Confirmar antecipação'}
-            useColor={'rgb(0, 0, 0)'}
-            onPress={handleButtonPress}
-          />
-        </View>
+      <View style={styles.but}>
+        <ButtonSolid
+          title={'Confirmar antecipação'}
+          useColor={'rgb(0, 0, 0)'}
+          onPress={handleButtonPress}
+        />
+      </View>
     </View>
   );
 }
@@ -154,10 +207,9 @@ const styles = StyleSheet.create({
   textMargin: {
     fontSize: 15,
     marginVertical: 10,
-    marginLeft: 8,
+    marginLeft: 10,
   },
   checkbox: {
-    marginVertical: 15,
-    marginRight: 5,
+    alignSelf: 'center',
   },
 });

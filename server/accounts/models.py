@@ -30,3 +30,11 @@ class Task(models.Model):
     def save(self, *args, **kwargs):
         super(Task, self).save(*args, **kwargs)
         self.user.update_cash()
+
+class Transaction(models.Model):
+    date = models.DateField()
+    antecipado = models.DecimalField(max_digits=10, decimal_places=2)
+    recebido = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=50)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)  # Add a reference to Task

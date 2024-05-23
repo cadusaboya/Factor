@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view # type: ignore
 from rest_framework.response import Response # type: ignore
 from django.contrib.auth import authenticate # type: ignore
 from django.middleware.csrf import get_token # type: ignore
-from .models import User, Task
-from .serializers import UserSerializer, TaskSerializer
+from .models import User, Task, Transaction
+from .serializers import UserSerializer, TaskSerializer, TransactionSerializer
 from rest_framework.decorators import api_view, permission_classes # type: ignore
 from rest_framework.response import Response # type: ignore
 from rest_framework import status # type: ignore
@@ -58,3 +58,34 @@ def user_tasks_view(request):
     tasks = Task.objects.filter(user=request.user)
     serializer = TaskSerializer(tasks, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_tasks(request):
+    try:
+        task_ids = request.data.get('tasks')
+        # Update tasks: Set is_completed to True for the specified task IDs
+        Task.objects.filter(id__in=task_ids).update(is_completed=True)
+        return Response({'message': 'Tasks updated successfully.'})
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+    
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_transaction(request):
+    try:
+        # Extract the user ID from the JWT token
+        user_id = request.user.id
+        
+        # Now you have the user ID, you can use it as needed in your view logic
+        
+        # Proceed with creating the transaction
+        serializer = TransactionSerializer(data=request.data)
+        if serializer.is_valid():
+            # Set the user ID before saving the transaction
+            serializer.save(user_id=user_id)
+            return Response({'message': 'Transaction created successfully.'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
