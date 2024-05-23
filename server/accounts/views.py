@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view # type: ignore
 from rest_framework.response import Response # type: ignore
 from django.contrib.auth import authenticate # type: ignore
 from django.middleware.csrf import get_token # type: ignore
-from .models import User
-from .serializers import UserSerializer
+from .models import User, Task
+from .serializers import UserSerializer, TaskSerializer
 from rest_framework.decorators import api_view, permission_classes # type: ignore
 from rest_framework.response import Response # type: ignore
 from rest_framework import status # type: ignore
@@ -50,3 +50,10 @@ def register_view(request):
 def user_cash_view(request):
     user_cash = request.user.cash  # Assuming profile is related to the user model
     return Response({'cash': user_cash})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_tasks_view(request):
+    tasks = Task.objects.filter(user=request.user)
+    serializer = TaskSerializer(tasks, many=True)
+    return Response(serializer.data)

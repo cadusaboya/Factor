@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Task
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,3 +20,8 @@ class UserSerializer(serializers.ModelSerializer):
             telefone=validated_data['telefone'],
         )
         return user
+    
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['id', 'name', 'value']

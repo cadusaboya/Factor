@@ -8,6 +8,7 @@ urlpatterns = [
     path('users/', views.register_view, name='register'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('user-cash/', views.user_cash_view, name='user_cash'),  # Add this URL pattern
+    path('user-cash/', views.user_cash_view, name='user_cash'),
+    path('tasks/', views.user_tasks_view, name='user-tasks'),
     path('admin/', admin.site.urls),
 ]
