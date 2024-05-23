@@ -16,6 +16,7 @@ export default function Tab1Screen() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [checkboxStates, setCheckboxStates] = useState([]);
+  const incompleteTasks = tasks.filter(task => !task.is_completed);
 
   useEffect(() => {
     // Fetch tasks from the backend
@@ -28,6 +29,7 @@ export default function Tab1Screen() {
             'Authorization': `Bearer ${token}`
           }
         });
+        console.log('Tasks from backend:', response.data); // Log tasks received from backend
         setTasks(response.data);
         setCheckboxStates(new Array(response.data.length).fill(false));
         setLoading(false);
@@ -49,7 +51,7 @@ export default function Tab1Screen() {
   };
 
   const calculateResult = () => {
-    return tasks.reduce((total, task, index) => {
+    return incompleteTasks.reduce((total, task, index) => {
       return checkboxStates[index] ? total + parseFloat(task.value) : total;
     }, 0);
   };
@@ -84,22 +86,22 @@ export default function Tab1Screen() {
         </View>
 
         <View style={styles.box}>
-          <WhiteBox width={350} height={tasks.length * 45}>
-            <Text style={styles.textBox}>{tasks.length} antecipações disponíveis </Text>
+          <WhiteBox width={350} height={360}>
+            <Text style={styles.textBox}>{incompleteTasks.length} antecipações disponíveis </Text>
             <Divider />
             <ScrollView>
-            {tasks.map((task, index) => (
-              <View key={task.id} style={styles.option}>
-                <Checkbox
-                  style={styles.checkbox}
-                  value={checkboxStates[index]}
-                  onValueChange={() => handleCheckboxChange(index)}
-                  color={checkboxStates[index] ? 'green' : undefined}
-                />
-                <Text numberOfLines={2} ellipsizeMode="tail" style={styles.textMargin}>
-                  {task.name}
-                </Text>
-              </View>
+            {incompleteTasks.map((task, index) => (
+            <View key={task.id} style={styles.option}>
+              <Checkbox
+                style={styles.checkbox}
+                value={checkboxStates[index]}
+                onValueChange={() => handleCheckboxChange(index)}
+                color={checkboxStates[index] ? 'green' : undefined}
+              />
+              <Text numberOfLines={2} ellipsizeMode="tail" style={styles.textMargin}>
+                {task.name}
+              </Text>
+            </View>
             ))}
             </ScrollView>
           </WhiteBox>
