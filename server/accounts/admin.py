@@ -1,7 +1,7 @@
 # myapp/admin.py
 
 from django.contrib import admin
-from .models import User, Task
+from .models import User, Task, Hospital
 
 class TaskAdmin(admin.ModelAdmin):
     def delete_model(self, request, obj):
@@ -11,3 +11,4 @@ class TaskAdmin(admin.ModelAdmin):
 
 admin.site.register(User)
 admin.site.register(Task, TaskAdmin)
+admin.site.register(Hospital)

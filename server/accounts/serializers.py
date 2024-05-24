@@ -1,10 +1,17 @@
 from rest_framework import serializers
-from .models import User, Task, Transaction
+from .models import User, Task, Transaction, Hospital
+
+class HospitalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hospital
+        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
+    hospitals = HospitalSerializer(many=True, read_only=True)
+
     class Meta:
         model = User
-        fields = ['username', 'password', 'cash', 'cpf', 'telefone']
+        fields = ['username', 'password', 'cash', 'cpf', 'telefone', 'hospitals']
         extra_kwargs = {
             'password': {'write_only': True},  # Ensure password is write-only
             'cpf': {'required': True},         # Make cpf required
@@ -20,7 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
             telefone=validated_data['telefone'],
         )
         return user
-    
+
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task

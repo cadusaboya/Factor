@@ -38,3 +38,15 @@ class Transaction(models.Model):
     status = models.CharField(max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)  # Add a reference to Task
+
+class Hospital(models.Model):
+    name = models.CharField(max_length=255)
+    address = models.TextField()
+    phone_number = models.CharField(max_length=15)
+    
+    def __str__(self):
+        return self.name
+
+
+# Adding a many-to-many relationship to User model
+User.add_to_class('hospitals', models.ManyToManyField(Hospital, related_name='employees'))
