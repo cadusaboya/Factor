@@ -9,7 +9,6 @@ import Tab3Screen from './tabs/mensagens';
 import Tab4Screen from './tabs/hospitais';
 import ProfileScreen from './tabs/ProfileScreen';
 import Header from '@/components/Header';
-import EditProfileScreen from './tabs/EditProfileScreen';
 import CreateAccount from './tabs/registro';
 import BemVindo from './tabs/welcome';
 import Login from './tabs/entrar';
@@ -33,7 +32,6 @@ const AppNavigator = () => {
       <Stack.Screen name="Mensagens" component={Tab3Screen} />
       <Stack.Screen name="Meus Hospitais" component={Tab4Screen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
-      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       
     </Stack.Navigator>
   );

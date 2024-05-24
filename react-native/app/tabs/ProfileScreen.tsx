@@ -28,10 +28,6 @@ export default function ProfileScreen() {
             // Handle error, show alert, etc.
         });
     }, []);
-
-    const handleCellPress = () => {
-        navigation.navigate('EditProfile');
-    };
   
     const handleButtonPress = () => {
         // Show an alert
@@ -81,7 +77,6 @@ export default function ProfileScreen() {
                             cellStyle="RightDetail"
                             title={item.title}
                             detail={item.detail}
-                            onPress={() => handleCellPress()}
                             onHighlightRow={separators.highlight}
                             onUnHighlightRow={separators.unhighlight}
                         />
