@@ -15,4 +15,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/hospitals/', views.user_hospitals, name='user_hospitals'),
     path('submit_request/', views.submit_request, name='submit_request'),
+    path('user/profile/', views.user_profile, name='user_profile'),
 ]

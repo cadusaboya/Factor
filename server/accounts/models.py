@@ -3,8 +3,9 @@ from django.contrib.auth.models import AbstractUser
 from django.dispatch import receiver
 
 class User(AbstractUser):
+    fullname = models.CharField(max_length=255)
     cash = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    cpf = models.DecimalField(max_digits=11, decimal_places=0, default=0.00)
+    cpf = models.CharField(max_length=11, default=0)
     telefone = models.DecimalField(max_digits=11, decimal_places=0, default=0.00)
 
     def update_cash(self):

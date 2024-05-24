@@ -54,6 +54,13 @@ def user_cash_view(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def user_profile(request):
+    user = request.user
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def user_tasks_view(request):
     tasks = Task.objects.filter(user=request.user)
     serializer = TaskSerializer(tasks, many=True)
