@@ -1,10 +1,15 @@
 from rest_framework import serializers
-from .models import User, Task, Transaction, Hospital
+from .models import User, Task, Transaction, Hospital, UserRequest
 
 class HospitalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hospital
         fields = '__all__'
+
+class UserRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserRequest
+        fields = ['hospitals', 'status']
 
 class UserSerializer(serializers.ModelSerializer):
     hospitals = HospitalSerializer(many=True, read_only=True)

@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view # type: ignore
 from rest_framework.response import Response # type: ignore
 from django.contrib.auth import authenticate # type: ignore
 from django.middleware.csrf import get_token # type: ignore
-from .models import User, Task, Transaction, Hospital
-from .serializers import UserSerializer, TaskSerializer, TransactionSerializer
+from .models import User, Task, Transaction, UserRequest
+from .serializers import UserSerializer, TaskSerializer, TransactionSerializer, UserRequestSerializer
 from rest_framework.decorators import api_view, permission_classes # type: ignore
 from rest_framework.response import Response # type: ignore
 from rest_framework import status # type: ignore
@@ -97,5 +97,21 @@ def transactions_view(request):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def submit_request(request):
+    serializer = UserRequestSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(user_id=request.user.id)
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_hospitals(request):
+    user = request.user
+    hospitals = user.hospitals.all()  # Assuming 'hospitals' is the related name of the ManyToMany field
+    hospital_ids = [hospital.id for hospital in hospitals]
+    return Response(hospital_ids)
 
     

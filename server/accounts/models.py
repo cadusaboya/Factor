@@ -50,3 +50,16 @@ class Hospital(models.Model):
 
 # Adding a many-to-many relationship to User model
 User.add_to_class('hospitals', models.ManyToManyField(Hospital, related_name='employees'))
+
+class UserRequest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    hospitals = models.ManyToManyField(Hospital)
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    )
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
+    def __str__(self):
+        return f"{self.user.username}'s Request"
