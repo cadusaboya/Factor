@@ -40,6 +40,14 @@ export default function CreateAccount() {
       </View>
 
       <View style={styles.box}>
+        <Text style={styles.label} >Nome Completo</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={text => setValue('fullname', text)}
+        />
+      </View>
+
+      <View style={styles.box}>
         <Text style={styles.label}>Senha</Text>
         <TextInput
             style={styles.input}
@@ -63,6 +71,14 @@ export default function CreateAccount() {
           style={styles.input}
           onChangeText={(text) => setValue('telefone', parseFloat(text))}
           keyboardType="numeric"
+        />
+      </View>
+
+      <View style={styles.box}>
+        <Text style={styles.label} >E-mail</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => setValue('email', text)}
         />
       </View>
 
