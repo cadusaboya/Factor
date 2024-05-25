@@ -1,7 +1,7 @@
 # myapp/admin.py
 
 from django.contrib import admin
-from .models import User, Task, Hospital, UserRequest
+from .models import User, Task, Hospital, UserRequest, Transaction
 
 class TaskAdmin(admin.ModelAdmin):
     def delete_model(self, request, obj):
@@ -22,6 +22,7 @@ class UserRequestAdmin(admin.ModelAdmin):
         queryset.update(status='rejected')
 
 admin.site.register(UserRequest, UserRequestAdmin)
+admin.site.register(Transaction)
 admin.site.register(User)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Hospital)

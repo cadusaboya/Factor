@@ -151,8 +151,8 @@ export default function Tab1Screen() {
                   onValueChange={() => handleCheckboxChange(index)}
                   color={checkboxStates[index] ? 'green' : undefined}
                 />
-                <Text numberOfLines={2} ellipsizeMode="tail" style={styles.textMargin}>
-                  {task.name}
+                <Text style={styles.textMargin}>
+                      {task.name}
                 </Text>
               </View>
             ))}
@@ -189,27 +189,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // Align items horizontally
     height: 58,
     width: 290,
+    flexWrap: 'wrap',
   },
+
   box: {
     marginVertical: 20,
   },
+
   but: {
     marginVertical: 20,
     borderRadius: 1,
   },
+
   text: {
     fontSize: 32,
   },
+
   textBox: {
     fontSize: 18,
     marginBottom: 10,
   },
+
   textMargin: {
     fontSize: 15,
-    marginVertical: 10,
+    marginVertical: 20,
     marginLeft: 10,
+    flex: 1, // Allow the text to take up remaining space
   },
+  
   checkbox: {
-    alignSelf: 'center',
+    marginVertical: 20,
   },
 });
