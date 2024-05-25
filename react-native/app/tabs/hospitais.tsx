@@ -22,6 +22,8 @@ export default function Tab4Screen() {
     3: false, // checkbox3
   });
 
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
   useEffect(() => {
     // Fetch the hospitals the logged-in user works on
     axios.get(`${API_URL}/user/hospitals/`, {
@@ -52,6 +54,10 @@ export default function Tab4Screen() {
   };
 
   const handleButtonPress = () => {
+    
+    // Disable the button to prevent multiple clicks
+    setIsButtonDisabled(true);
+
     // Get the hospitals selected by the user
     const selectedHospitals = Object.keys(checkboxStates).filter(key => checkboxStates[key]);
 
@@ -72,7 +78,7 @@ export default function Tab4Screen() {
           {
             text: 'OK',
             onPress: () => {
-              // Navigate back to the main page
+              setIsButtonDisabled(false);
               navigation.goBack(); // or navigation.navigate('Home') if 'Home' is the name of the main page
             },
           },
@@ -83,6 +89,7 @@ export default function Tab4Screen() {
       console.error('Error submitting user request:', error);
       // Show an alert indicating failure
       Alert.alert('Erro', 'Ocorreu um erro ao enviar a solicitação. Por favor, tente novamente mais tarde.');
+      setIsButtonDisabled(false);
     });
   };
 
@@ -118,6 +125,7 @@ export default function Tab4Screen() {
             title={'Atualizar'}
             useColor={'rgb(0, 0, 0)'}
             onPress={handleButtonPress}
+            disabled={isButtonDisabled}  // Disable the button based on stat
           />
         </View>
       </ScrollView>

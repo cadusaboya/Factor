@@ -12,6 +12,7 @@ export default function ProfileScreen() {
     const [userData, setUserData] = useState(null);
     const API_URL = 'https://factor-cadusaboya.loca.lt';
     const { token } = useAuth(); // Retrieve the token using the useAuth hook
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     useEffect(() => {
         // Fetch user data from the backend
@@ -30,14 +31,19 @@ export default function ProfileScreen() {
     }, []);
   
     const handleButtonPress = () => {
+        // Disable the button to prevent multiple clicks
+        setIsButtonDisabled(true);
+        
         // Show an alert
         Alert.alert(
             'Sucesso',
-            'Você será redirecionado a página de login',
+            'Você será redirecionado ao menu inicial',
             [
                 {
                     text: 'OK',
                     onPress: () => {
+                        setIsButtonDisabled(false);  // Re-enable the button
+                        
                         // Navigate back to the main page
                         navigation.dispatch(
                             CommonActions.reset({
@@ -100,6 +106,7 @@ export default function ProfileScreen() {
                     useColor={'rgb(200, 0, 0)'}
                     borderRadius={100}
                     onPress={handleButtonPress}
+                    disabled={isButtonDisabled}  // Disable the button based on stat
                 />
             </View>
         </View>

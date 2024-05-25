@@ -37,7 +37,6 @@ export default function CreateAccount() {
         );
       } else {
         Alert.alert('Erro', 'Dados incorretos');
-        setIsButtonDisabled(false);  // Re-enable the button
       }
     } catch (error) {
       console.error('Error during login:', error);
