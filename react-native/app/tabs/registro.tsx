@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, TextInput, Alert } from 'react-native';
+import { Text, View, StyleSheet, Alert } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import {ButtonSolid} from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
 import Constants from 'expo-constants';
@@ -32,24 +33,24 @@ export default function CreateAccount() {
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <Text style={styles.label} >Usuário</Text>
         <TextInput
+          label='Usuário'
           style={styles.input}
           onChangeText={text => setValue('username', text)}
         />
       </View>
 
       <View style={styles.box}>
-        <Text style={styles.label} >Nome Completo</Text>
         <TextInput
+          label='Nome Completo'
           style={styles.input}
           onChangeText={text => setValue('fullname', text)}
         />
       </View>
 
       <View style={styles.box}>
-        <Text style={styles.label}>Senha</Text>
         <TextInput
+            label='Senha'
             style={styles.input}
             onChangeText={(text) => setValue('password', text)}
             secureTextEntry={true}
@@ -57,8 +58,8 @@ export default function CreateAccount() {
       </View>
 
       <View style={styles.box}>
-        <Text style={styles.label} >CPF</Text>
         <TextInput
+          label='CPF'
           style={styles.input}
           onChangeText={(text) => setValue('cpf', text)}
           keyboardType="numeric"
@@ -66,8 +67,8 @@ export default function CreateAccount() {
       </View>
 
       <View style={styles.box}>
-        <Text style={styles.label} >Telefone</Text>
         <TextInput
+          label='Telefone'
           style={styles.input}
           onChangeText={(text) => setValue('telefone', parseFloat(text))}
           keyboardType="numeric"
@@ -75,8 +76,8 @@ export default function CreateAccount() {
       </View>
 
       <View style={styles.box}>
-        <Text style={styles.label} >E-mail</Text>
         <TextInput
+          label='E-mail'
           style={styles.input}
           onChangeText={(text) => setValue('email', text)}
         />
@@ -95,16 +96,18 @@ export default function CreateAccount() {
 }
 
 const styles = StyleSheet.create({
-  label: {
+  labelx: {
     margin: 20,
     marginLeft: 0,
   },
 
   box: {
     marginHorizontal: 30,
+    margin: 5,
   },
+
   but: {
-    marginVertical: 100,
+    marginVertical: 80,
     marginHorizontal: 50,
   },
   container: {
@@ -117,9 +120,8 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: 'white',
     borderColor: 'black',
-    borderWidth: 0.3,
-    height: 40,
-    padding: 10,
+    borderWidth: 0.2,
+    height: 70,
     borderRadius: 4,
   }
 });
