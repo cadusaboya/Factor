@@ -42,14 +42,22 @@ export default function CreateAccount() {
   const onSubmit = (data) => {
     handleLogin(data);
   };
+
+    // Create refs for each input
+    const usernameRef = React.useRef();
+    const passwordRef = React.useRef();
   
   return (
     <View style={styles.container}>
-      <View style={styles.box}>
+           <View style={styles.box}>
         <TextInput
           label='Usuário'
           style={styles.input}
           onChangeText={text => setValue('username', text)}
+          returnKeyType="next"
+          onSubmitEditing={() => passwordRef.current.focus()}
+          blurOnSubmit={false}
+          ref={usernameRef}
         />
       </View>
 
@@ -59,6 +67,8 @@ export default function CreateAccount() {
           style={styles.input}
           onChangeText={(text) => setValue('password', text)}
           secureTextEntry={true}
+          returnKeyType="done"
+          ref={passwordRef}
         />
       </View>
 
