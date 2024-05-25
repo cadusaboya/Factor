@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Text, View, StyleSheet, TextInput, Alert } from 'react-native';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
 
@@ -20,10 +20,15 @@ export default function CreateAccount() {
         // Store the JWT token securely (e.g., in AsyncStorage or Redux state)
         const token = res.data.token;
         await login(token); // Store the token using the login function from useAuth
-        console.log('Token:', token);
-        // Navigate to the main screen or perform other actions
-        navigation.navigate('Home');
-        Alert.alert('Login successful');
+        // After successful login
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              { name: 'Home' },
+            ],
+          })
+        );
       } else {
         Alert.alert('Invalid username or password');
       }
