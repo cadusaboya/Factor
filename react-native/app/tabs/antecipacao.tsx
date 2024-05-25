@@ -16,6 +16,7 @@ export default function Tab1Screen() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [checkboxStates, setCheckboxStates] = useState([]);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const incompleteTasks = tasks.filter(task => !task.is_completed);
 
@@ -55,11 +56,15 @@ export default function Tab1Screen() {
   };
 
   const handleButtonPress = async () => {
+    // Disable the button to prevent multiple clicks
+    setIsButtonDisabled(true);
+
     try {
       // Filter out tasks where checkbox is checked based on incomplete tasks
       const tasksToComplete = incompleteTasks.filter((task, index) => checkboxStates[index]);
       if (!tasksToComplete.length) {
         Alert.alert('Erro', 'Por favor, selecione ao menos um pedido de antecipação');
+        setIsButtonDisabled(false);  // Re-enable the button
         return;
       }
 
@@ -79,7 +84,6 @@ export default function Tab1Screen() {
 
       // Create a transaction for each task
       await Promise.all(tasksToComplete.map(async (task) => {
-
         // Send the request
         await axios.post(`${API_URL}/transactions/`, {
           task: task.id,
@@ -110,6 +114,9 @@ export default function Tab1Screen() {
       // Handle error
       console.error('Failed to confirm anticipation:', error);
       Alert.alert('Erro', 'Não foi possível confirmar a antecipação. Por favor, tente novamente.');
+    } finally {
+      // Re-enable the button after the action is complete
+      setIsButtonDisabled(false);
     }
   };
 
@@ -165,6 +172,7 @@ export default function Tab1Screen() {
           title={'Confirmar antecipação'}
           useColor={'rgb(0, 0, 0)'}
           onPress={handleButtonPress}
+          disabled={isButtonDisabled}  // Disable the button based on stat
         />
       </View>
     </View>

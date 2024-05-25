@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { Text, View, StyleSheet, Alert } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
@@ -11,10 +11,14 @@ export default function CreateAccount() {
   const { register, setValue, handleSubmit, errors } = useForm(); 
   const navigation = useNavigation();
   const { login } = useAuth();
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   
   const API_URL = 'https://factor-cadusaboya.loca.lt';
   
   const handleLogin = async (data) => {
+    // Disable the button to prevent multiple clicks
+    setIsButtonDisabled(true);
+    
     try {
       const res = await axios.post(`${API_URL}/login/`, data);
       if (res.data.message === "Login successful") {
@@ -22,6 +26,7 @@ export default function CreateAccount() {
         const token = res.data.token;
         await login(token); // Store the token using the login function from useAuth
         // After successful login
+        setIsButtonDisabled(false);  // Re-enable the button
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -32,10 +37,14 @@ export default function CreateAccount() {
         );
       } else {
         Alert.alert('Erro', 'Dados incorretos');
+        setIsButtonDisabled(false);  // Re-enable the button
       }
     } catch (error) {
       console.error('Error during login:', error);
       Alert.alert('Erro', 'Houve um erro durante sua solicitação, tente novamente mais tarde');
+    } finally {
+      // Re-enable the button after the action is complete
+      setIsButtonDisabled(false);
     }
   };
   
@@ -77,6 +86,7 @@ export default function CreateAccount() {
           title={'Entrar'}
           useColor={'rgb(0, 0, 0)'}
           onPress={handleSubmit(onSubmit)}
+          disabled={isButtonDisabled}  // Disable the button based on stat
         />
       </View>
     </View>
