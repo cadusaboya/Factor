@@ -38,13 +38,13 @@ class TransactionAdmin(admin.ModelAdmin):
     actions = ['approve_requests', 'reject_requests', 'paid_requests']
 
     def approve_requests(self, request, queryset):
-        queryset.update(status='aprovado')
+        queryset.update(status='Aprovado')
 
     def reject_requests(self, request, queryset):
-        queryset.update(status='recusado')
+        queryset.update(status='Recusado')
 
     def paid_requests(self, request, queryset):
-        queryset.update(status='recebido')
+        queryset.update(status='Recebido')
 
 admin.site.register(UserRequest, UserRequestAdmin)
 admin.site.register(Transaction, TransactionAdmin)
