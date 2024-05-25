@@ -18,13 +18,12 @@ export default function BemVindo() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.overlay}>
-        <ThemedText style={styles.saldo}>Bem Vindo</ThemedText>
-      </View>
-
-
       <View style={styles.center}>
-        <View style={styles.row}>
+
+        <ThemedText style={styles.saldo}>Bem vindo a Factor</ThemedText>
+        <ThemedText style={styles.saldo2}>Criada para facilitar a vida dos médicos</ThemedText>
+        
+        <View style={styles.but}>
             <TouchableOpacity
             style={styles.button}
             onPress={() => handleButtonPress('Registro')}>
@@ -43,7 +42,7 @@ export default function BemVindo() {
 };
 
 const { width } = Dimensions.get('window');
-const buttonWidth = (width - 32) / 2.5; // Adjust button width according to screen size
+const buttonWidth = (width) / 1.5; // Adjust button width according to screen size
 
 const styles = StyleSheet.create({
   container: {
@@ -61,11 +60,18 @@ const styles = StyleSheet.create({
   },
 
   saldo: {
-    color: 'white',
-    marginTop: 50,
-    marginHorizontal: 10,
+    color: 'black',
+    marginTop: 100,
+    marginBottom: 100,
     fontSize: 24,
     fontWeight: 'bold',
+  },
+  saldo2: {
+    color: 'black',
+    marginBottom: 230,
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center', // Center text horizontally
   },
   valor: {
     marginHorizontal: 50,
@@ -80,12 +86,12 @@ const styles = StyleSheet.create({
   },
   button: {
     width: buttonWidth,
-    height: 150, // Adjust button height as needed
+    height: 60, // Adjust button height as needed
     backgroundColor: '#1c1b1b',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 100,
-    marginHorizontal: 8,
+    borderRadius: 4,
+    marginVertical: 10,
   },
   buttonText: {
     color: 'white',
@@ -93,9 +99,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   center: {
-    justifyContent: 'center', // Center content vertically
     alignItems: 'center', // Center content horizontally
     marginVertical: 100
+  },
+
+  but: {
+    marginVertical: 20,
+    borderRadius: 1,
   },
 });
 
