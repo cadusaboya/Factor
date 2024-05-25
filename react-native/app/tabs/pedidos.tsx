@@ -164,7 +164,8 @@ const styles = StyleSheet.create({
   
   cell: {
     flex: 1,
-    padding: 10,
+    paddingLeft: 10,
+    paddingVertical: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
