@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FlatList, View, StyleSheet, Text, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Avatar } from '@rneui/themed';
 import { Cell, Separator, TableView } from 'react-native-tableview-simple';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import axios from 'axios'; // Import Axios for making HTTP requests
 import { useAuth } from '@/hooks/useAuth';
@@ -39,7 +39,14 @@ export default function ProfileScreen() {
                     text: 'OK',
                     onPress: () => {
                         // Navigate back to the main page
-                        navigation.navigate('Welcome'); // or navigation.navigate('Home') if 'Home' is the name of the main page
+                        navigation.dispatch(
+                            CommonActions.reset({
+                              index: 0,
+                              routes: [
+                                { name: 'Welcome' },
+                              ],
+                            })
+                          );
                     },
                 },
             ]
