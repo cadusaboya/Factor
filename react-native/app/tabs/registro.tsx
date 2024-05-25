@@ -20,7 +20,7 @@ export default function CreateAccount() {
       navigation.goBack(); // Navigate back after successful creation
     } catch (error) {
       console.error('Error creating user:', error);
-      Alert.alert('Erro', 'Não foi possível confirmar a antecipação. Por favor, tente novamente.');
+      Alert.alert('Erro', 'Não foi possível criar a sua conta. Por favor, tente novamente.');
     }
   };
 

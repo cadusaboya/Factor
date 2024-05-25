@@ -97,7 +97,6 @@ def transactions_view(request):
                 
                 # Proceed with creating the transaction
                 serializer = TransactionSerializer(data=request.data)
-                print(serializer)
                 if serializer.is_valid():
                     # Set the user ID before saving the transaction
                     serializer.save(user_id=user_id)

@@ -62,45 +62,37 @@ export default function Tab1Screen() {
         Alert.alert('Erro', 'Por favor, selecione ao menos um pedido de antecipação');
         return;
       }
-  
+
       // Log tasksToComplete to debug
       console.log('Tasks to complete:', tasksToComplete);
-  
+
       // Extract the IDs of the tasks to complete
       const taskIds = tasksToComplete.map(task => task.id);
       console.log('Task IDs to complete:', taskIds);
-  
+
       // Update tasks to set is_completed to true
       await axios.post(`${API_URL}/update-tasks/`, { tasks: taskIds }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-  
+
       // Create a transaction for each task
       await Promise.all(tasksToComplete.map(async (task) => {
-        // Log the data before sending the request
-        console.log("Transaction data:", {
-          task: task.id,
-          date: new Date().toISOString().split('T')[0],
-          antecipado: task.value,
-          recebido: (task.value * 0.94).toFixed(2),
-          status: 'Em Análise'
-        });
-      
+
         // Send the request
         await axios.post(`${API_URL}/transactions/`, {
           task: task.id,
           date: new Date().toISOString().split('T')[0],
           antecipado: task.value,
-          recebido:(task.value * 0.94).toFixed(2)
+          recebido: (task.value * 0.94).toFixed(2)
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
       }));
-  
+
       // Handle success
       Alert.alert(
         'Sucesso',
@@ -125,15 +117,13 @@ export default function Tab1Screen() {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
-
-
   return (
     <View style={styles.container}>
       <View style={styles.box}>
         <WhiteBox width={350} height={100}>
           <Text style={styles.textBox}>Saldo sendo antecipado: </Text>
           <Divider />
-          <Text style={styles.text}>R$ {calculateResult()}</Text>
+          <Text style={styles.text}>R$ {calculateResult().toFixed(2)}</Text>
         </WhiteBox>
       </View>
 
@@ -152,10 +142,10 @@ export default function Tab1Screen() {
                     color={checkboxStates[index] ? 'green' : undefined}
                   />
                   <Text style={styles.textMargin}>
-                        {task.name}
+                    {task.name}
                   </Text>
                 </View>
-                <Divider/>
+                <Divider />
               </View>
             ))}
           </ScrollView>
@@ -190,39 +180,33 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: 'row',
     alignItems: 'center', // Align items vertically in the middle
-    height: 60, // Adjust the height as needed
     width: 290,
     flexWrap: 'wrap',
   },
-
   box: {
     marginVertical: 20,
   },
-
   but: {
     marginVertical: 20,
     borderRadius: 1,
   },
-
   text: {
     fontSize: 32,
   },
-
   textBox: {
     fontSize: 18,
     marginBottom: 10,
   },
-
   textMargin: {
     fontSize: 15,
     marginLeft: 10,
+    flexShrink: 1,
+    width: '80%',
   },
-
   divider: {
     height: 1,
     backgroundColor: 'gray',
   },
-
   checkbox: {
     marginTop: 40,
   },
