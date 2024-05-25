@@ -59,7 +59,7 @@ export default function Tab1Screen() {
       // Filter out tasks where checkbox is checked based on incomplete tasks
       const tasksToComplete = incompleteTasks.filter((task, index) => checkboxStates[index]);
       if (!tasksToComplete.length) {
-        Alert.alert('No tasks selected', 'Please select at least one task to confirm anticipation.');
+        Alert.alert('Erro', 'Por favor, selecione ao menos um pedido de antecipação');
         return;
       }
   

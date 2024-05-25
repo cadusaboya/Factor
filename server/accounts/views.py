@@ -32,7 +32,10 @@ def login_view(request):
         }
         return Response(response_data, status=status.HTTP_200_OK)
     else:
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+        response_data = {
+            'message': 'Login unsuccessful',
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
     
 @api_view(['POST'])
 def register_view(request):

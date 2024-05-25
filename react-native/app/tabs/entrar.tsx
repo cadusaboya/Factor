@@ -31,11 +31,11 @@ export default function CreateAccount() {
           })
         );
       } else {
-        Alert.alert('Invalid username or password');
+        Alert.alert('Erro', 'Dados incorretos');
       }
     } catch (error) {
       console.error('Error during login:', error);
-      Alert.alert('An error occurred during login');
+      Alert.alert('Erro', 'Houve um erro durante sua solicitação, tente novamente mais tarde');
     }
   };
   

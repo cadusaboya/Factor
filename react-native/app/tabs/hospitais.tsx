@@ -40,6 +40,7 @@ export default function Tab4Screen() {
     })
     .catch(error => {
       console.error('Error fetching user hospitals:', error);
+      Alert.alert('Erro', 'Ocorreu um erro ao processar as informações. Por favor, tente novamente mais tarde.');
     });
   }, []);
 
