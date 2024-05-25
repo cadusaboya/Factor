@@ -93,8 +93,7 @@ export default function Tab1Screen() {
           task: task.id,
           date: new Date().toISOString().split('T')[0],
           antecipado: task.value,
-          recebido:(task.value * 0.94).toFixed(2),
-          status: 'Em Análise'
+          recebido:(task.value * 0.94).toFixed(2)
         }, {
           headers: {
             'Authorization': `Bearer ${token}`

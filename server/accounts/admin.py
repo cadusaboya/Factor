@@ -21,8 +21,23 @@ class UserRequestAdmin(admin.ModelAdmin):
     def reject_requests(self, request, queryset):
         queryset.update(status='rejected')
 
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = ['task', 'status']  # Display task instead of transaction
+    list_filter = ['status']
+    search_fields = ['task__name']  # Search by task name
+    actions = ['approve_requests', 'reject_requests', 'paid_requests']
+
+    def approve_requests(self, request, queryset):
+        queryset.update(status='aprovado')
+
+    def reject_requests(self, request, queryset):
+        queryset.update(status='recusado')
+
+    def paid_requests(self, request, queryset):
+        queryset.update(status='recebido')
+
 admin.site.register(UserRequest, UserRequestAdmin)
-admin.site.register(Transaction)
+admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(User)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Hospital)

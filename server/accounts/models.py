@@ -36,9 +36,18 @@ class Transaction(models.Model):
     date = models.DateField()
     antecipado = models.DecimalField(max_digits=10, decimal_places=2)
     recebido = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=50)
+    STATUS_CHOICES = (
+        ('Em análise', 'Em Análise'),
+        ('Aprovado', 'Aprovado'),
+        ('Recusado', 'Recusado'),
+        ('Recebido', 'Recebido'),
+    )
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Em análise')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)  # Add a reference to Task
+
+    def __str__(self):
+        return f"{self.task.name}"
 
 class Hospital(models.Model):
     name = models.CharField(max_length=255)

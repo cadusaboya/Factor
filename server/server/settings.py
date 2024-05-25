@@ -27,11 +27,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '192.168.0.8',
+    '0.0.0.0',
+    '192.168.100.11',
     'localhost',
     '127.0.0.1',
     'factor-cadusaboya.loca.lt',
     'exp://jqpzlmg-cadusaboya-8081.exp.direct',
-    r'^https?://jqpzlmg-cadusaboya-8081\.exp\.direct$'
+    r'^https?://jqpzlmg-cadusaboya-8081\.exp\.direct$',
+    'https://factor-cadusaboya.loca.lt'
 ]
 
 
@@ -63,8 +66,10 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
+    'https://factor-cadusaboya.loca.lt',
     r'^https?://jqpzlmg-cadusaboya-8081\.exp\.direct$',
-    'exp://jqpzlmg-cadusaboya-8081.exp.direct'
+    'exp://jqpzlmg-cadusaboya-8081.exp.direct',
+    'http://factor-cadusaboya.loca.lt'
 ]
 
 

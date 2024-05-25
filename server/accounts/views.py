@@ -89,18 +89,17 @@ def transactions_view(request):
     
     elif request.method == 'POST':
         try:
-            # Extract the user ID from the JWT token
-            user_id = request.user.id
-            
-            # Now you have the user ID, you can use it as needed in your view logic
-            
-            # Proceed with creating the transaction
-            serializer = TransactionSerializer(data=request.data)
-            if serializer.is_valid():
-                # Set the user ID before saving the transaction
-                serializer.save(user_id=user_id)
-                return Response({'message': 'Transaction created successfully.'}, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                # Extract the user ID from the JWT token
+                user_id = request.user.id    
+                
+                # Proceed with creating the transaction
+                serializer = TransactionSerializer(data=request.data)
+                print(serializer)
+                if serializer.is_valid():
+                    # Set the user ID before saving the transaction
+                    serializer.save(user_id=user_id)
+                    return Response({'message': 'Transaction created successfully.'}, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
