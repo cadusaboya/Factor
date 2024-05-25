@@ -71,5 +71,18 @@ class UserRequest(models.Model):
     )
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
+    def save(self, *args, **kwargs):
+        if self.pk:  # Check if the object already exists in the database
+            old_status = UserRequest.objects.get(pk=self.pk).status
+            if old_status != 'approved' and self.status == 'approved':
+                # Clear the user's existing hospital relationships
+                self.user.hospitals.clear()
+                # Update the user's associated hospitals
+                for hospital in self.hospitals.all():
+                    self.user.hospitals.add(hospital)
+                self.user.save()
+        
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.user.username}'s Request"

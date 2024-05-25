@@ -15,11 +15,21 @@ class UserRequestAdmin(admin.ModelAdmin):
     search_fields = ['user__username']
     actions = ['approve_requests', 'reject_requests']
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
     def approve_requests(self, request, queryset):
-        queryset.update(status='approved')
+        for obj in queryset:
+            obj.status = 'approved'
+            obj.save()
 
     def reject_requests(self, request, queryset):
-        queryset.update(status='rejected')
+        for obj in queryset:
+            obj.status = 'rejected'
+            obj.save()
+
+    approve_requests.short_description = 'Approve selected requests'
+    reject_requests.short_description = 'Reject selected requests'
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ['task', 'status']  # Display task instead of transaction
