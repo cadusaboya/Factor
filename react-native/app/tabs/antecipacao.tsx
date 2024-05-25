@@ -140,19 +140,22 @@ export default function Tab1Screen() {
       <View style={styles.box}>
         <WhiteBox width={350} height={360}>
           <Text style={styles.textBox}>{incompleteTasks.length} antecipações disponíveis </Text>
-          <Divider />
+          <Divider style={styles.divider} />
           <ScrollView>
             {incompleteTasks.map((task, index) => (
-              <View key={task.id} style={styles.option}>
-                <Checkbox
-                  style={styles.checkbox}
-                  value={checkboxStates[index]}
-                  onValueChange={() => handleCheckboxChange(index)}
-                  color={checkboxStates[index] ? 'green' : undefined}
-                />
-                <Text style={styles.textMargin}>
-                      {task.name}
-                </Text>
+              <View key={task.id}>
+                <View style={styles.option}>
+                  <Checkbox
+                    style={styles.checkbox}
+                    value={checkboxStates[index]}
+                    onValueChange={() => handleCheckboxChange(index)}
+                    color={checkboxStates[index] ? 'green' : undefined}
+                  />
+                  <Text style={styles.textMargin}>
+                        {task.name}
+                  </Text>
+                </View>
+                <Divider/>
               </View>
             ))}
           </ScrollView>
@@ -185,8 +188,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   option: {
-    flexDirection: 'row', // Align items horizontally
-    height: 58,
+    flexDirection: 'row',
+    alignItems: 'center', // Align items vertically in the middle
+    height: 60, // Adjust the height as needed
     width: 290,
     flexWrap: 'wrap',
   },
@@ -211,12 +215,15 @@ const styles = StyleSheet.create({
 
   textMargin: {
     fontSize: 15,
-    marginVertical: 20,
     marginLeft: 10,
-    flex: 1, // Allow the text to take up remaining space
   },
-  
+
+  divider: {
+    height: 1,
+    backgroundColor: 'gray',
+  },
+
   checkbox: {
-    marginVertical: 20,
+    marginTop: 40,
   },
 });
