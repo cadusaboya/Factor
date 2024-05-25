@@ -20,7 +20,7 @@ export default function BemVindo() {
     <View style={styles.container}>
       <View style={styles.center}>
 
-        <ThemedText style={styles.saldo}>Bem vindo a Factor</ThemedText>
+        <ThemedText style={styles.saldo}>Em breve, Factor</ThemedText>
         <ThemedText style={styles.saldo2}>Criada para facilitar a vida dos médicos</ThemedText>
         
         <View style={styles.but}>
