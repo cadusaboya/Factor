@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, TextInput, Alert } from 'react-native';
+import { Text, View, StyleSheet, Alert } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
 import { useNavigation, CommonActions } from '@react-navigation/native';
@@ -45,16 +46,16 @@ export default function CreateAccount() {
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <Text style={styles.label}>Usuário</Text>
         <TextInput
+          label='Usuário'
           style={styles.input}
           onChangeText={text => setValue('username', text)}
         />
       </View>
 
       <View style={styles.box}>
-        <Text style={styles.label}>Senha</Text>
         <TextInput
+          label='Senha'
           style={styles.input}
           onChangeText={(text) => setValue('password', text)}
           secureTextEntry={true}
@@ -79,9 +80,10 @@ const styles = StyleSheet.create({
   },
   box: {
     marginHorizontal: 30,
+    margin: 5,
   },
   but: {
-    marginVertical: 100,
+    marginVertical: 80,
     marginHorizontal: 50,
   },
   container: {
@@ -94,9 +96,8 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: 'white',
     borderColor: 'black',
-    borderWidth: 0.3,
-    height: 40,
-    padding: 10,
+    borderWidth: 0.2,
+    height: 70,
     borderRadius: 4,
   }
 });
