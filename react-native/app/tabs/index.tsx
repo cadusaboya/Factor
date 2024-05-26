@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator, Dimensions, Linking } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { ThemedText } from '@/components/ThemedText';
 import axios from 'axios';
@@ -45,6 +45,22 @@ export default function HomeScreen() {
     navigation.navigate(menu);
   };
 
+  const sendWhatsapp = () => {
+    // Phone number in international format
+    const phoneNumber = '+5591984147769';
+  
+    // Message you want to send
+    const message = 'Olá, estou com um problema referente ao aplicativo Factor. Você pode me ajudar?    ';
+  
+    // Construct the WhatsApp URL
+    const whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+  
+    // Open the WhatsApp app
+    Linking.openURL(whatsappUrl)
+      .then(() => console.log('WhatsApp opened'))
+      .catch((error) => console.error('Error opening WhatsApp:', error));
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.overlay}>
@@ -72,8 +88,8 @@ export default function HomeScreen() {
         <View style={styles.row}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleButtonPress('Mensagens')}>
-            <Text style={styles.buttonText}>Mensagens</Text>
+            onPress={sendWhatsapp}>
+            <Text style={styles.buttonText}>Suporte</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
