@@ -19,11 +19,18 @@ const Header = () => {
         return <BlankComponent width={61.3} height={0} />;
     };
 
+    const renderProfileButton = () => {
+        if (route.name !== 'Registro' && route.name !== 'Welcome' && route.name !== 'Entrar' && route.name !== 'Profile') {
+            return <Appbar.Action icon="account" onPress={() => navigation.navigate('Profile')} />
+        }
+        return <BlankComponent width={61.3} height={0} />;
+    };
+
     return (
         <Appbar.Header>
             {renderHomeButton()}
             <Appbar.Content title="Factor" style={{ flex: 1, alignItems: 'center' }} />
-            <Appbar.Action icon="account" onPress={() => navigation.navigate('Profile')} />
+            {renderProfileButton()}
         </Appbar.Header>
     );
 };
