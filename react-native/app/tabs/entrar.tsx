@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Text, View, StyleSheet, Alert, Dimensions } from 'react-native';
+import { View, StyleSheet, Alert, Dimensions } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
@@ -10,7 +10,7 @@ import axios from 'axios';
 const { width, height } = Dimensions.get('window');
 
 export default function CreateAccount() {
-  const { register, setValue, handleSubmit, errors } = useForm();
+  const { setValue, handleSubmit } = useForm();
   const navigation = useNavigation();
   const { login } = useAuth();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);

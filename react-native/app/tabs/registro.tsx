@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Alert, KeyboardAvoidingView, ScrollView, Platform, Dimensions } from 'react-native';
+import { View, StyleSheet, Alert, KeyboardAvoidingView, ScrollView, Platform, Dimensions } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
-import Constants from 'expo-constants';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
 
 export default function CreateAccount() {
-  const { register, setValue, handleSubmit, errors } = useForm();
+  const { setValue, handleSubmit } = useForm();
   const navigation = useNavigation();
 
   const API_URL = 'https://factor-cadusaboya.loca.lt';

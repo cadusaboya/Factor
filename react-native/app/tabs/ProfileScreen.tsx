@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, View, StyleSheet, Text, Alert, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
+import { FlatList, View, StyleSheet, Text, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { Avatar } from '@rneui/themed';
 import { Cell, Separator, TableView } from 'react-native-tableview-simple';
 import { useNavigation, CommonActions } from '@react-navigation/native';
@@ -7,7 +7,7 @@ import { ButtonSolid } from 'react-native-ui-buttons';
 import axios from 'axios'; // Import Axios for making HTTP requests
 import { useAuth } from '@/hooks/useAuth';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export default function ProfileScreen() {
     const navigation = useNavigation();
