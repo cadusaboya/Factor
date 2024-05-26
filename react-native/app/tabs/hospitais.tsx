@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Alert, Image, useWindowDimensions } from 'react-native';
-import { Text, Divider } from '@rneui/themed';
+import { Text } from '@rneui/themed';
 import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
 import { ButtonSolid } from 'react-native-ui-buttons';
