@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { Text, Divider } from '@rneui/themed';
 import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
@@ -7,6 +7,8 @@ import { ButtonSolid } from 'react-native-ui-buttons';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
+
+const { width, height } = Dimensions.get('window');
 
 export default function Tab1Screen() {
   const navigation = useNavigation();
@@ -21,7 +23,6 @@ export default function Tab1Screen() {
   const incompleteTasks = tasks.filter(task => !task.is_completed);
 
   useEffect(() => {
-    // Fetch tasks from the backend
     const fetchTasks = async () => {
       try {
         const response = await axios.get(`${API_URL}/tasks/`, {
@@ -56,35 +57,27 @@ export default function Tab1Screen() {
   };
 
   const handleButtonPress = async () => {
-    // Disable the button to prevent multiple clicks
     setIsButtonDisabled(true);
 
     try {
-      // Filter out tasks where checkbox is checked based on incomplete tasks
       const tasksToComplete = incompleteTasks.filter((task, index) => checkboxStates[index]);
       if (!tasksToComplete.length) {
         Alert.alert('Erro', 'Por favor, selecione ao menos um pedido de antecipação');
-        setIsButtonDisabled(false);  // Re-enable the button
+        setIsButtonDisabled(false);
         return;
       }
 
-      // Log tasksToComplete to debug
       console.log('Tasks to complete:', tasksToComplete);
-
-      // Extract the IDs of the tasks to complete
       const taskIds = tasksToComplete.map(task => task.id);
       console.log('Task IDs to complete:', taskIds);
 
-      // Update tasks to set is_completed to true
       await axios.post(`${API_URL}/update-tasks/`, { tasks: taskIds }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
-      // Create a transaction for each task
       await Promise.all(tasksToComplete.map(async (task) => {
-        // Send the request
         await axios.post(`${API_URL}/transactions/`, {
           task: task.id,
           date: new Date().toISOString().split('T')[0],
@@ -97,7 +90,6 @@ export default function Tab1Screen() {
         });
       }));
 
-      // Handle success
       Alert.alert(
         'Sucesso',
         'Em breve o dinheiro será enviado para sua conta',
@@ -105,17 +97,15 @@ export default function Tab1Screen() {
           {
             text: 'OK',
             onPress: () => {
-              navigation.navigate("Home"); // or navigate to another screen
+              navigation.navigate("Home");
             },
           },
         ]
       );
     } catch (error) {
-      // Handle error
       console.error('Failed to confirm anticipation:', error);
       Alert.alert('Erro', 'Não foi possível confirmar a antecipação. Por favor, tente novamente.');
     } finally {
-      // Re-enable the button after the action is complete
       setIsButtonDisabled(false);
     }
   };
@@ -127,7 +117,7 @@ export default function Tab1Screen() {
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <WhiteBox width={350} height={100}>
+        <WhiteBox width={width * 0.9} height={height * 0.11}>
           <Text style={styles.textBox}>Saldo sendo antecipado: </Text>
           <Divider />
           <Text style={styles.text}>R$ {calculateResult().toFixed(2)}</Text>
@@ -135,7 +125,7 @@ export default function Tab1Screen() {
       </View>
 
       <View style={styles.box}>
-        <WhiteBox width={350} height={360}>
+        <WhiteBox width={width * 0.9} height={height * 0.4}>
           <Text style={styles.textBox}>{incompleteTasks.length} antecipações disponíveis </Text>
           <Divider style={styles.divider} />
           <ScrollView>
@@ -160,7 +150,7 @@ export default function Tab1Screen() {
       </View>
 
       <View style={styles.box}>
-        <WhiteBox width={350} height={100}>
+        <WhiteBox width={width * 0.9} height={height * 0.11}>
           <Text style={styles.textBox}>Valor a ser creditado na conta: </Text>
           <Divider />
           <Text style={styles.text}>R$ {(calculateResult() * 0.94).toFixed(2)}</Text>
@@ -172,7 +162,7 @@ export default function Tab1Screen() {
           title={'Confirmar antecipação'}
           useColor={'rgb(0, 0, 0)'}
           onPress={handleButtonPress}
-          disabled={isButtonDisabled}  // Disable the button based on stat
+          disabled={isButtonDisabled}
         />
       </View>
     </View>
@@ -184,30 +174,32 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#E7E7E7',
     alignItems: 'center',
+    padding: width * 0.05,
   },
   option: {
     flexDirection: 'row',
-    alignItems: 'center', // Align items vertically in the middle
-    width: 290,
+    alignItems: 'center',
+    width: width * 0.8,
+    height: height * 0.055,
     flexWrap: 'wrap',
   },
   box: {
-    marginVertical: 20,
+    marginVertical: height * 0.02,
   },
   but: {
-    marginVertical: 20,
+    marginVertical: height * 0.01,
     borderRadius: 1,
   },
   text: {
-    fontSize: 32,
+    fontSize: width * 0.08,
   },
   textBox: {
-    fontSize: 18,
-    marginBottom: 10,
+    fontSize: width * 0.045,
+    marginBottom: height * 0.01,
   },
   textMargin: {
-    fontSize: 15,
-    marginLeft: 10,
+    fontSize: width * 0.04,
+    marginLeft: width * 0.02,
     flexShrink: 1,
     width: '80%',
   },
@@ -216,6 +208,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'gray',
   },
   checkbox: {
-    marginTop: 40,
+    marginTop: height * 0.035,
   },
 });

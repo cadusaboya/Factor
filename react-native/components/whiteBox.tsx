@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-const WhiteBox = ({ children, width, height }) => {
+const WhiteBox = ({ children, width, height, innerContainerPadding = 20, borderRadius = 10 }) => {
   return (
-    <View style={[styles.container, { width: width, height: height }]}>
-      <View style={styles.innerContainer}>
+    <View style={[styles.container, { width, height, borderRadius: borderRadius }]}>
+      <View style={[styles.innerContainer, { padding: innerContainerPadding }]}>
         {children}
       </View>
     </View>
@@ -13,16 +13,13 @@ const WhiteBox = ({ children, width, height }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'transparent', // Set background color to transparent
-    borderWidth: 0, // No border
-    borderRadius: 10, // Adjust border radius as needed
-    overflow: 'hidden', // Clip content within the box
-    
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    overflow: 'hidden',
   },
   innerContainer: {
     backgroundColor: 'white',
-    padding: 20,
-    flex: 1, // Stretch to fill the container's height
+    flex: 1,
   },
 });
 

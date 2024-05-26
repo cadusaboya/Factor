@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, View, StyleSheet, Text, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { FlatList, View, StyleSheet, Text, Alert, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { Avatar } from '@rneui/themed';
 import { Cell, Separator, TableView } from 'react-native-tableview-simple';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import axios from 'axios'; // Import Axios for making HTTP requests
 import { useAuth } from '@/hooks/useAuth';
+
+const { width, height } = Dimensions.get('window');
 
 export default function ProfileScreen() {
     const navigation = useNavigation();
@@ -68,7 +70,7 @@ export default function ProfileScreen() {
         <View style={styles.container}>
             <View style={styles.nome}>
                 <Avatar
-                    size={128}
+                    size={width * 0.3}
                     rounded
                     title={userData.username.substring(0, 2).toUpperCase()} // Assuming the backend provides name initials
                     containerStyle={{ backgroundColor: 'coral' }}
@@ -104,7 +106,7 @@ export default function ProfileScreen() {
                 <ButtonSolid
                     title={'Sair'}
                     useColor={'rgb(200, 0, 0)'}
-                    borderRadius={100}
+                    borderRadius={width * 0.1} // Adjust button border radius
                     onPress={handleButtonPress}
                     disabled={isButtonDisabled}  // Disable the button based on stat
                 />
@@ -120,22 +122,22 @@ const styles = StyleSheet.create({
     },
 
     table: {
-        marginTop: 40,
-        borderRadius: 100,
+        marginTop: width * 0.1,
+        borderRadius: width * 0.3,
     },
 
     nome: {
-        marginTop: 40,
+        marginTop: width * 0.1,
         alignItems: 'center',
     },
 
     nombre: {
-        fontSize: 24,
-        marginTop: 12,
+        fontSize: width * 0.06,
+        marginTop: width * 0.03,
     },
 
     but: {
-        marginVertical: 100,
-        marginHorizontal: 50,
+        marginVertical: width * 0.25,
+        marginHorizontal: width * 0.1,
     },
 });

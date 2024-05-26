@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Text, View, StyleSheet, Alert } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { Text, View, StyleSheet, Alert, Dimensions } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
@@ -7,32 +7,29 @@ import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
 
+const { width, height } = Dimensions.get('window');
+
 export default function CreateAccount() {
-  const { register, setValue, handleSubmit, errors } = useForm(); 
+  const { register, setValue, handleSubmit, errors } = useForm();
   const navigation = useNavigation();
   const { login } = useAuth();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  
+
   const API_URL = 'https://factor-cadusaboya.loca.lt';
-  
+
   const handleLogin = async (data) => {
-    // Disable the button to prevent multiple clicks
     setIsButtonDisabled(true);
-    
+
     try {
       const res = await axios.post(`${API_URL}/login/`, data);
-      if (res.data.message === "Login successful") {
-        // Store the JWT token securely (e.g., in AsyncStorage or Redux state)
+      if (res.data.message === 'Login successful') {
         const token = res.data.token;
-        await login(token); // Store the token using the login function from useAuth
-        // After successful login
-        setIsButtonDisabled(false);  // Re-enable the button
+        await login(token);
+        setIsButtonDisabled(false);
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [
-              { name: 'Home' },
-            ],
+            routes: [{ name: 'Home' }],
           })
         );
       } else {
@@ -42,26 +39,24 @@ export default function CreateAccount() {
       console.error('Error during login:', error);
       Alert.alert('Erro', 'Houve um erro durante sua solicitação, tente novamente mais tarde');
     } finally {
-      // Re-enable the button after the action is complete
       setIsButtonDisabled(false);
     }
   };
-  
+
   const onSubmit = (data) => {
     handleLogin(data);
   };
 
-    // Create refs for each input
-    const usernameRef = React.useRef();
-    const passwordRef = React.useRef();
-  
+  const usernameRef = useRef();
+  const passwordRef = useRef();
+
   return (
     <View style={styles.container}>
-           <View style={styles.box}>
+      <View style={styles.box}>
         <TextInput
-          label='Usuário'
+          label="Usuário"
           style={styles.input}
-          onChangeText={text => setValue('username', text)}
+          onChangeText={(text) => setValue('username', text)}
           returnKeyType="next"
           onSubmitEditing={() => passwordRef.current.focus()}
           blurOnSubmit={false}
@@ -71,7 +66,7 @@ export default function CreateAccount() {
 
       <View style={styles.box}>
         <TextInput
-          label='Senha'
+          label="Senha"
           style={styles.input}
           onChangeText={(text) => setValue('password', text)}
           secureTextEntry={true}
@@ -85,7 +80,7 @@ export default function CreateAccount() {
           title={'Entrar'}
           useColor={'rgb(0, 0, 0)'}
           onPress={handleSubmit(onSubmit)}
-          disabled={isButtonDisabled}  // Disable the button based on stat
+          disabled={isButtonDisabled}
         />
       </View>
     </View>
@@ -93,17 +88,13 @@ export default function CreateAccount() {
 }
 
 const styles = StyleSheet.create({
-  label: {
-    margin: 20,
-    marginLeft: 0,
-  },
   box: {
-    marginHorizontal: 30,
-    margin: 5,
+    marginHorizontal: width * 0.1, // 10% of screen width
+    marginVertical: height * 0.01, // 1% of screen height
   },
   but: {
-    marginVertical: 80,
-    marginHorizontal: 50,
+    marginVertical: height * 0.1, // 10% of screen height
+    marginHorizontal: width * 0.2, // 20% of screen width
   },
   container: {
     flex: 1,
@@ -116,7 +107,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderColor: 'black',
     borderWidth: 0.2,
-    height: 70,
+    height: height * 0.08, // 8% of screen height
     borderRadius: 4,
-  }
+  },
 });

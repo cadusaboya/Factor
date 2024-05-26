@@ -1,111 +1,85 @@
 import React from 'react';
-import { View, ImageBackground, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { Button, ButtonGroup, withTheme, Text } from '@rneui/themed';
+import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Header from '@/components/Header';
 import { ThemedText } from '@/components/ThemedText';
-import axios from 'axios';
 
+const { width, height } = Dimensions.get('window');
 
 export default function BemVindo() {
-
     const navigation = useNavigation();
 
-    const handleButtonPress = (menu: string) => {
+    const handleButtonPress = (menu) => {
         console.log(`Navigating to ${menu}`);
         navigation.navigate(menu); // Navigate to the desired screen
-  };
+    };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.center}>
-
-        <ThemedText style={styles.saldo}>Em breve, Factor</ThemedText>
-        <ThemedText style={styles.saldo2}>Criada para facilitar a vida dos médicos</ThemedText>
-        
-        <View style={styles.but}>
-            <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleButtonPress('Registro')}>
-            <Text style={styles.buttonText}>Criar Conta</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleButtonPress('Entrar')}>
-            <Text style={styles.buttonText}>Já sou usuário</Text>
-            </TouchableOpacity>
+    return (
+        <View style={styles.container}>
+            <View style={styles.center}>
+                <ThemedText style={styles.saldo}>Em breve, Factor</ThemedText>
+                <ThemedText style={styles.saldo2}>Criada para facilitar a vida dos médicos</ThemedText>
+                
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => handleButtonPress('Registro')}
+                    >
+                        <ThemedText style={styles.buttonText}>Criar Conta</ThemedText>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => handleButtonPress('Entrar')}
+                    >
+                        <ThemedText style={styles.buttonText}>Já sou usuário</ThemedText>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
-
-      </View>
-    </View>
-  );
-};
-
-const { width } = Dimensions.get('window');
-const buttonWidth = (width) / 1.5; // Adjust button width according to screen size
+    );
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E7E7E7',
-  },
-  backgroundImage: {
-    width: '100%',
-    aspectRatio: 16 / 7, // Aspect ratio 16:9
-  },
-  overlay: {
-    height: 150,
-    marginBottom: 50,
-    backgroundColor: '#1c1b1b',
-  },
-
-  saldo: {
-    color: 'black',
-    marginTop: 100,
-    marginBottom: 100,
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  saldo2: {
-    color: 'black',
-    marginBottom: 230,
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center', // Center text horizontally
-  },
-  valor: {
-    marginHorizontal: 50,
-    marginTop: 10,
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  row: {
-    flexDirection: 'row',
-    marginBottom: 50,
-  },
-  button: {
-    width: buttonWidth,
-    height: 60, // Adjust button height as needed
-    backgroundColor: '#1c1b1b',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 4,
-    marginVertical: 10,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  center: {
-    alignItems: 'center', // Center content horizontally
-    marginVertical: 100
-  },
-
-  but: {
-    marginVertical: 20,
-    borderRadius: 1,
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#E7E7E7',
+    },
+    saldo: {
+        color: 'black',
+        marginTop: height * 0.25, // 25% from top
+        marginBottom: height * 0.03, // 5% from bottom
+        fontSize: width * 0.06, // Font size based on screen width
+        fontWeight: 'bold',
+        textAlign: 'center', // Center text horizontally
+        lineHeight: height * 0.04,
+    },
+    saldo2: {
+        color: 'black',
+        marginBottom: height * 0.25, // 25% from bottom
+        fontSize: width * 0.05, // Font size based on screen width
+        textAlign: 'center', // Center text horizontally
+        lineHeight: height * 0.04,
+    },
+    buttonContainer: {
+        alignItems: 'center', // Center buttons horizontally
+    },
+    button: {
+        width: width * 0.8, // Adjust button width to 80% of screen width,
+        height: height * 0.07, // 7% of screen height
+        backgroundColor: '#1c1b1b',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 4,
+        marginVertical: height * 0.015, // 1.5% of screen height
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: width * 0.04, // Font size based on screen width
+        fontWeight: 'bold',
+        lineHeight: height * 0.03,
+    },
+    center: {
+        alignItems: 'center', // Center content horizontally
+        justifyContent: 'center', // Center content vertically
+        flex: 1, // Take up full height of screen
+    },
 });
-

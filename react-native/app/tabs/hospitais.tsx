@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert, Image } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, Image, useWindowDimensions } from 'react-native';
 import { Text, Divider } from '@rneui/themed';
 import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 export default function Tab4Screen() {
   const navigation = useNavigation();
+  const { width, height } = useWindowDimensions();
   const API_URL = 'https://factor-cadusaboya.loca.lt';
   const { token } = useAuth(); // Retrieve the token using the useAuth hook
 
@@ -54,7 +55,6 @@ export default function Tab4Screen() {
   };
 
   const handleButtonPress = () => {
-    
     // Disable the button to prevent multiple clicks
     setIsButtonDisabled(true);
 
@@ -97,23 +97,22 @@ export default function Tab4Screen() {
     <View style={styles.container}>
       <ScrollView>
         <View>
-          <Text style={styles.head}>Hospitais credenciados </Text>
+          <Text style={[styles.head, { fontSize: width * 0.06 }]}>Hospitais credenciados</Text>
         </View>
 
         <View style={styles.box}>
-          <WhiteBox width={350} height={500}>
+          <WhiteBox width={width * 0.9} height={height * 0.6}>
             {[{ key: 2, image: HPDImage }, { key: 1, image: CSTImage }, { key: 3, image: STImage }].map(({ key, image }) => (
               <React.Fragment key={key}>
-                <View style={styles.option}>
+                <View style={[styles.option, { width: width * 0.8 }]}>
                   <Checkbox
                     style={styles.checkbox}
                     value={checkboxStates[key]}
                     onValueChange={() => handleCheckboxChange(key)}
                     color={checkboxStates[key] ? 'green' : undefined}
                   />
-                  <Image source={image} style={styles.image} resizeMode="contain" />
+                  <Image source={image} style={[styles.image, { width: width * 0.5 }]} resizeMode="contain" />
                 </View>
-                
                 <View style={styles.divider} />
               </React.Fragment>
             ))}
@@ -125,7 +124,7 @@ export default function Tab4Screen() {
             title={'Atualizar'}
             useColor={'rgb(0, 0, 0)'}
             onPress={handleButtonPress}
-            disabled={isButtonDisabled}  // Disable the button based on stat
+            disabled={isButtonDisabled}  // Disable the button based on state
           />
         </View>
       </ScrollView>
@@ -139,49 +138,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#E7E7E7',
     alignItems: 'center',
   },
-  
   image: {
-    width: 200, // Adjust width and height as needed
     height: 60,
   },
-  
   option: {
     flexDirection: 'row', // Align items horizontally
     height: 80,
-    width: 290,
   },
-  
   box: {
     marginVertical: 20,
   },
-  
   but: {
-    marginTop: 60,
+    marginTop: 20,
     borderRadius: 1,
   },
-  
   head: {
-    fontSize: 24,
     textAlign: 'center',
     marginTop: 50,
   },
-  
-  textBox: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  
-  textMargin: {
-    fontSize: 15,
-    marginVertical: 10,
-    marginLeft: 8,
-  },
-  
   checkbox: {
     marginVertical: 20,
     marginRight: 20,
   },
-  
   divider: {
     height: 0.3,
     backgroundColor: 'black',

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator, Dimensions } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { ThemedText } from '@/components/ThemedText';
 import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
 
+const { width, height } = Dimensions.get('window');
+
 export default function HomeScreen() {
   const navigation = useNavigation();
   const API_URL = 'https://factor-cadusaboya.loca.lt';
-  const { token } = useAuth(); // Retrieve the token using the useAuth hook
+  const { token } = useAuth();
 
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -34,24 +36,23 @@ export default function HomeScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Fetch user data every time the screen gains focus
       fetchUserData();
     }, [])
   );
 
   const handleButtonPress = (menu) => {
     console.log(`Navigating to ${menu}`);
-    navigation.navigate(menu); // Navigate to the desired screen
+    navigation.navigate(menu);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.overlay}>
-        <ThemedText style={styles.saldo}>Saldo disponível:</ThemedText>
+        <ThemedText style={styles.saldo}>Saldo disponível</ThemedText>
         {loading ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (
-          <ThemedText style={styles.valor}>R$ {userData?.cash}</ThemedText>
+          <ThemedText style={styles.valor}>R$ {userData?.cash.toFixed(2)}</ThemedText>
         )}
       </View>
 
@@ -80,7 +81,6 @@ export default function HomeScreen() {
             <Text style={styles.buttonText}>Meus hospitais</Text>
           </TouchableOpacity>
         </View>
-       
       </View>
     </View>
   );
@@ -92,45 +92,49 @@ const styles = StyleSheet.create({
     backgroundColor: '#E7E7E7',
   },
   overlay: {
-    height: 150,
-    marginBottom: 50,
+    height: height * 0.15, // 20% of screen height
+    marginBottom: height * 0.05, // 5% of screen height
     backgroundColor: '#1c1b1b',
+    justifyContent: 'center',
   },
   saldo: {
     color: 'white',
-    marginTop: 50,
-    marginHorizontal: 10,
-    fontSize: 24,
+    fontSize: width * 0.06, // 6% of screen width
+    marginLeft: width * 0.05,
     fontWeight: 'bold',
+    lineHeight: height * 0.04,
   },
   valor: {
-    marginHorizontal: 50,
-    marginTop: 10,
+    marginLeft: width * 0.15,
     color: 'white',
-    fontSize: 24,
+    fontSize: width * 0.06, // 6% of screen width
     fontWeight: 'bold',
+    lineHeight: height * 0.04,
   },
   row: {
     flexDirection: 'row',
-    marginBottom: 50,
+    justifyContent: 'center',
+    marginBottom: height * 0.05, // 5% of screen height
   },
   button: {
-    width: 150,
-    height: 150, // Adjust button height as needed
+    width: width * 0.4, // 40% of screen width
+    height: width * 0.4, // Square buttons
     backgroundColor: '#1c1b1b',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 100,
-    marginHorizontal: 8,
+    borderRadius: width * 0.2, // 50% of button width for circular buttons
+    marginHorizontal: width * 0.02, // 2% of screen width
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: width * 0.04, // 4% of screen width
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   center: {
-    justifyContent: 'center', // Center content vertically
-    alignItems: 'center', // Center content horizontally
-    marginVertical: 100,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: height * 0.05, // 5% of screen height
   },
 });
