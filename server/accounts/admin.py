@@ -2,13 +2,6 @@
 
 from django.contrib import admin
 from .models import User, Hospital, UserRequest
-from tasks.models import Task, Transaction
-
-class TaskAdmin(admin.ModelAdmin):
-    def delete_model(self, request, obj):
-        user = obj.user
-        obj.delete()  # Delete the task
-        Task.update_user_cash(user.id)
 
 class UserRequestAdmin(admin.ModelAdmin):
     list_display = ['user', 'status']
@@ -32,23 +25,8 @@ class UserRequestAdmin(admin.ModelAdmin):
     approve_requests.short_description = 'Approve selected requests'
     reject_requests.short_description = 'Reject selected requests'
 
-class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['task', 'status']  # Display task instead of transaction
-    list_filter = ['status']
-    search_fields = ['task__name']  # Search by task name
-    actions = ['approve_requests', 'reject_requests', 'paid_requests']
 
-    def approve_requests(self, request, queryset):
-        queryset.update(status='Aprovado')
-
-    def reject_requests(self, request, queryset):
-        queryset.update(status='Recusado')
-
-    def paid_requests(self, request, queryset):
-        queryset.update(status='Recebido')
 
 admin.site.register(UserRequest, UserRequestAdmin)
-admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(User)
-admin.site.register(Task, TaskAdmin)
 admin.site.register(Hospital)
