@@ -2,15 +2,15 @@
 
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './tabs/index';
-import Tab2Screen from './tabs/pedidos';
-import Tab1Screen from './tabs/antecipacao';
-import Tab4Screen from './tabs/hospitais';
-import ProfileScreen from './tabs/ProfileScreen';
+import HomeScreen from './tabs/homescreen';
+import History from './tabs/history';
+import Antecipacao from './tabs/antecipacao';
+import Hospitals from './tabs/hospitals';
+import Profile from './tabs/profile';
 import Header from '@/components/Header';
-import CreateAccount from './tabs/registro';
-import BemVindo from './tabs/welcome';
-import Login from './tabs/entrar';
+import Register from './tabs/register';
+import Welcome from './tabs/welcome';
+import Login from './tabs/login';
 
 const Stack = createStackNavigator();
 
@@ -22,14 +22,14 @@ const AppNavigator = () => {
         header: () => <Header />, // Use your custom header for all screens
       }}
     >
-      <Stack.Screen name="Welcome" component={BemVindo} />
-      <Stack.Screen name="Registro" component={CreateAccount} />
+      <Stack.Screen name="Welcome" component={Welcome} />
+      <Stack.Screen name="Registro" component={Register} />
       <Stack.Screen name="Entrar" component={Login} />
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Antecipação" component={Tab1Screen} />
-      <Stack.Screen name="Meus Pedidos" component={Tab2Screen} />
-      <Stack.Screen name="Meus Hospitais" component={Tab4Screen} />
-      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Antecipação" component={Antecipacao} />
+      <Stack.Screen name="Meus Pedidos" component={History} />
+      <Stack.Screen name="Meus Hospitais" component={Hospitals} />
+      <Stack.Screen name="Profile" component={Profile} />
       
     </Stack.Navigator>
   );

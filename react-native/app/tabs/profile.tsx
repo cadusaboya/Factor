@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 const { width } = Dimensions.get('window');
 
-export default function ProfileScreen() {
+export default function Profile() {
     const navigation = useNavigation();
     const [userData, setUserData] = useState(null);
     const API_URL = 'https://factor-cadusaboya.loca.lt';

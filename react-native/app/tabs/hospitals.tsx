@@ -11,7 +11,7 @@ import CSTImage from '@/assets/images/HCST.png';
 import STImage from '@/assets/images/HST.png';
 import { useAuth } from '@/hooks/useAuth';
 
-export default function Tab4Screen() {
+export default function Hospitals() {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
   const API_URL = 'https://factor-cadusaboya.loca.lt';

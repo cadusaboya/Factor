@@ -4,7 +4,7 @@ import WhiteBox from '@/components/whiteBox';
 import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
 
-export default function Tab2Screen() {
+export default function History() {
   const [transactions, setTransactions] = useState([]);
   const API_URL = 'https://factor-cadusaboya.loca.lt';
   const { token } = useAuth();

@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 const { width, height } = Dimensions.get('window');
 
-export default function Tab1Screen() {
+export default function Antecipacao() {
   const navigation = useNavigation();
   const API_URL = 'https://factor-cadusaboya.loca.lt';
   const { token } = useAuth();

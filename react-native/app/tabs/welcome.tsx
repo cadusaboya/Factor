@@ -5,7 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 
 const { width, height } = Dimensions.get('window');
 
-export default function BemVindo() {
+export default function Welcome() {
     const navigation = useNavigation();
 
     const handleButtonPress = (menu) => {

@@ -8,7 +8,7 @@ import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
 
-export default function CreateAccount() {
+export default function Register() {
   const { setValue, handleSubmit } = useForm();
   const navigation = useNavigation();
 
