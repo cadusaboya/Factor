@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import User, Task, Transaction, Hospital, UserRequest
+from .models import User, Hospital, UserRequest
+from tasks.models import Task, Transaction
 
 class HospitalSerializer(serializers.ModelSerializer):
     class Meta:

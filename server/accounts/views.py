@@ -3,7 +3,8 @@ from rest_framework.decorators import api_view # type: ignore
 from rest_framework.response import Response # type: ignore
 from django.contrib.auth import authenticate # type: ignore
 from django.middleware.csrf import get_token # type: ignore
-from .models import User, Task, Transaction, UserRequest
+from .models import User, UserRequest
+from tasks.models import Task, Transaction
 from .serializers import UserSerializer, TaskSerializer, TransactionSerializer, UserRequestSerializer
 from rest_framework.decorators import api_view, permission_classes # type: ignore
 from rest_framework.response import Response # type: ignore
@@ -51,7 +52,7 @@ def register_view(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])  # Add IsAuthenticated permission here
 def user_cash_view(request):
-    request.user.update_cash()
+    Task.update_user_cash(request.user.id)
     user_cash = request.user.cash
     return Response({'cash': user_cash})
 
@@ -100,6 +101,7 @@ def transactions_view(request):
                 if serializer.is_valid():
                     # Set the user ID before saving the transaction
                     serializer.save(user_id=user_id)
+                    Task.update_user_cash(request.user.id)
                     return Response({'message': 'Transaction created successfully.'}, status=status.HTTP_201_CREATED)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
