@@ -16,7 +16,7 @@ export default function Register() {
 
   const handleCreateUser = async (data) => {
     try {
-      const res = await axios.post(`${API_URL}/accounts/users/`, data);
+      const res = await axios.post(`${API_URL}/accounts/register/`, data);
       console.log(res.data);
       navigation.goBack();
     } catch (error) {

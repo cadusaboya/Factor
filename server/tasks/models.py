@@ -1,6 +1,6 @@
 from django.db import models
 from accounts.models import User
-from accounts.services import user_cash
+from accounts.services import update_user_cash
 
 class Task(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projects')
@@ -13,7 +13,7 @@ class Task(models.Model):
 
     def save(self, *args, **kwargs):
         super(Task, self).save(*args, **kwargs)
-        user_cash(self.user)
+        update_user_cash(self.user)
 
 class Transaction(models.Model):
     date = models.DateField()

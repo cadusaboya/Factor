@@ -11,7 +11,7 @@ from rest_framework import status # type: ignore
 from django.contrib.auth import authenticate # type: ignore
 from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
 from rest_framework.permissions import IsAuthenticated
-from accounts.services import user_cash
+from accounts.services import update_user_cash
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -33,7 +33,7 @@ def update_tasks(request):
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])  # Allow authenticated users
-def transactions(request):
+def user_transactions(request):
     if request.method == 'GET':
         # Retrieve transactions for the authenticated user
         transactions = Transaction.objects.filter(user=request.user)
@@ -50,7 +50,7 @@ def transactions(request):
                 if serializer.is_valid():
                     # Set the user ID before saving the transaction
                     serializer.save(user_id=user_id)
-                    user_cash(request.user)
+                    update_user_cash(request.user)
                     return Response({'message': 'Transaction created successfully.'}, status=status.HTTP_201_CREATED)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:

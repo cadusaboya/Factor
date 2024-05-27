@@ -9,8 +9,8 @@ from rest_framework.response import Response # type: ignore
 from rest_framework import status # type: ignore
 from django.contrib.auth import authenticate # type: ignore
 from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
-from rest_framework.permissions import IsAuthenticated
-from .services import user_cash
+from rest_framework.permissions import IsAuthenticated # type: ignore
+from .services import update_user_cash
 
 @api_view(['POST'])
 def login(request):
@@ -50,14 +50,14 @@ def register(request):
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])  # Add IsAuthenticated permission here
-def cash(request):
+def user_cash(request):
     user = request.user
-    cash_amount = user_cash(user)
+    cash_amount = update_user_cash(user)
     return Response({'cash': cash_amount})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def profile(request):
+def user_profile(request):
     user = request.user
     serializer = UserSerializer(user)
     return Response(serializer.data)
@@ -73,7 +73,7 @@ def submit_request(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def hospitals(request):
+def user_hospitals(request):
     user = request.user
     hospitals = user.hospitals.all()  # Assuming 'hospitals' is the related name of the ManyToMany field
     hospital_ids = [hospital.id for hospital in hospitals]

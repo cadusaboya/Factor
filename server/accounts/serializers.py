@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import User, Hospital, UserRequest
-from tasks.models import Task, Transaction
 
 class HospitalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,13 +36,3 @@ class UserSerializer(serializers.ModelSerializer):
             fullname=validated_data['fullname'],
         )
         return user
-
-class TaskSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Task
-        fields = ['id', 'name', 'value', 'is_completed']
-
-class TransactionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Transaction
-        fields = ['task', 'date', 'antecipado', 'recebido', 'status']

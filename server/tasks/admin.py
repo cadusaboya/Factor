@@ -1,12 +1,12 @@
 from django.contrib import admin
 from .models import Task, Transaction
-from accounts.services import user_cash
+from accounts.services import update_user_cash
 
 class TaskAdmin(admin.ModelAdmin):
     def delete_model(self, request, obj):
         user = obj.user
         obj.delete()  # Delete the task
-        user_cash(user)
+        update_user_cash(user)
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ['task', 'status']  # Display task instead of transaction

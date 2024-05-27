@@ -66,12 +66,10 @@ export default function Antecipacao() {
         setIsButtonDisabled(false);
         return;
       }
+      
+      const taskIds = tasksToComplete.map(task => task.id);;
 
-      console.log('Tasks to complete:', tasksToComplete);
-      const taskIds = tasksToComplete.map(task => task.id);
-      console.log('Task IDs to complete:', taskIds);
-
-      await axios.post(`${API_URL}/tasks/update-tasks/`, { tasks: taskIds }, {
+      await axios.post(`${API_URL}/tasks/update/`, { tasks: taskIds }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
