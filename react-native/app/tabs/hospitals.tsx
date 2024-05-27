@@ -62,7 +62,7 @@ export default function Hospitals() {
     const selectedHospitals = Object.keys(checkboxStates).filter(key => checkboxStates[key]);
 
     // Send a POST request to create a user request
-    axios.post(`${API_URL}/accounts/requests/`, {
+    axios.post(`${API_URL}/accounts/user/requests/`, {
       hospitals: selectedHospitals,
     }, {
       headers: {

@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from .services import user_cash
 
 @api_view(['POST'])
-def login_view(request):
+def login(request):
     """
     Handle user login.
     """
@@ -38,7 +38,7 @@ def login_view(request):
         return Response(response_data, status=status.HTTP_200_OK)
     
 @api_view(['POST'])
-def register_view(request):
+def register(request):
         
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
@@ -50,14 +50,14 @@ def register_view(request):
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])  # Add IsAuthenticated permission here
-def user_cash_view(request):
+def cash(request):
     user = request.user
     cash_amount = user_cash(user)
     return Response({'cash': cash_amount})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def user_profile(request):
+def profile(request):
     user = request.user
     serializer = UserSerializer(user)
     return Response(serializer.data)
@@ -73,7 +73,7 @@ def submit_request(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def user_hospitals(request):
+def hospitals(request):
     user = request.user
     hospitals = user.hospitals.all()  # Assuming 'hospitals' is the related name of the ManyToMany field
     hospital_ids = [hospital.id for hospital in hospitals]

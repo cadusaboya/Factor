@@ -15,7 +15,7 @@ from accounts.services import user_cash
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def user_tasks_view(request):
+def user_tasks(request):
     tasks = Task.objects.filter(user=request.user)
     serializer = TaskSerializer(tasks, many=True)
     return Response(serializer.data)
@@ -33,7 +33,7 @@ def update_tasks(request):
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])  # Allow authenticated users
-def transactions_view(request):
+def transactions(request):
     if request.method == 'GET':
         # Retrieve transactions for the authenticated user
         transactions = Transaction.objects.filter(user=request.user)
