@@ -71,14 +71,14 @@ export default function Antecipacao() {
       const taskIds = tasksToComplete.map(task => task.id);
       console.log('Task IDs to complete:', taskIds);
 
-      await axios.post(`${API_URL}/update-tasks/`, { tasks: taskIds }, {
+      await axios.post(`${API_URL}/tasks/update-tasks/`, { tasks: taskIds }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
       await Promise.all(tasksToComplete.map(async (task) => {
-        await axios.post(`${API_URL}/user/transactions/`, {
+        await axios.post(`${API_URL}/tasks/user/transactions/`, {
           task: task.id,
           date: new Date().toISOString().split('T')[0],
           antecipado: task.value,

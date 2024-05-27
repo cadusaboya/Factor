@@ -21,7 +21,7 @@ class TransactionAdmin(admin.ModelAdmin):
         queryset.update(status='Recusado')
 
     def paid_requests(self, request, queryset):
-        queryset.update(status='Recebido')
+        queryset.update(status='Pago')
 
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Task, TaskAdmin)

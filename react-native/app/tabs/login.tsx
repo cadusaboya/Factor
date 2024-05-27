@@ -21,7 +21,7 @@ export default function Login() {
     setIsButtonDisabled(true);
 
     try {
-      const res = await axios.post(`${API_URL}/login/`, data);
+      const res = await axios.post(`${API_URL}/accounts/login/`, data);
       if (res.data.message === 'Login successful') {
         const token = res.data.token;
         await login(token);

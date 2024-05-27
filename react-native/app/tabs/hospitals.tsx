@@ -27,7 +27,7 @@ export default function Hospitals() {
 
   useEffect(() => {
     // Fetch the hospitals the logged-in user works on
-    axios.get(`${API_URL}/user/hospitals/`, {
+    axios.get(`${API_URL}/accounts/user/hospitals/`, {
       headers: {
         'Authorization': `Bearer ${token}`
       },
@@ -62,7 +62,7 @@ export default function Hospitals() {
     const selectedHospitals = Object.keys(checkboxStates).filter(key => checkboxStates[key]);
 
     // Send a POST request to create a user request
-    axios.post(`${API_URL}/submit_request/`, {
+    axios.post(`${API_URL}/accounts/requests/`, {
       hospitals: selectedHospitals,
     }, {
       headers: {

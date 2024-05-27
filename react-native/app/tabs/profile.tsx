@@ -18,7 +18,7 @@ export default function Profile() {
 
     useEffect(() => {
         // Fetch user data from the backend
-        axios.get(`${API_URL}/user/profile/`, {
+        axios.get(`${API_URL}/accounts/user/profile/`, {
             headers: {
                 'Authorization': `Bearer ${token}`, // Assuming you have a token from authentication
             },

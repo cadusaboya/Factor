@@ -17,7 +17,7 @@ export default function HomeScreen() {
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`${API_URL}/user/cash/`, {
+      const response = await axios.get(`${API_URL}/accounts/user/cash/`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

@@ -23,7 +23,7 @@ class Transaction(models.Model):
         ('Em análise', 'Em Análise'),
         ('Aprovado', 'Aprovado'),
         ('Recusado', 'Recusado'),
-        ('Recebido', 'Recebido'),
+        ('Pago', 'Pago'),
     )
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Em análise')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
