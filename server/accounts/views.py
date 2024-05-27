@@ -52,7 +52,7 @@ def register_view(request):
 @permission_classes([IsAuthenticated])  # Add IsAuthenticated permission here
 def user_cash_view(request):
     request.user.update_cash()
-    user_cash = request.user.cash  # Assuming profile is related to the user model
+    user_cash = request.user.cash
     return Response({'cash': user_cash})
 
 @api_view(['GET'])

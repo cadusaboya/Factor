@@ -78,7 +78,7 @@ export default function Antecipacao() {
       });
 
       await Promise.all(tasksToComplete.map(async (task) => {
-        await axios.post(`${API_URL}/transactions/`, {
+        await axios.post(`${API_URL}/user/transactions/`, {
           task: task.id,
           date: new Date().toISOString().split('T')[0],
           antecipado: task.value,

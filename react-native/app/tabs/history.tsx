@@ -14,7 +14,7 @@ export default function History() {
     const fetchTransactions = async () => {
       try {
         // Fetch transactions from the backend
-        const response = await axios.get(`${API_URL}/transactions/`, {
+        const response = await axios.get(`${API_URL}/user/transactions/`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
