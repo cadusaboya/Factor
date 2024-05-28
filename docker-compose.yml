@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: ./react-native
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./react-native:/app
+    environment:
+      - EXPO_TOKEN=${EXPO_TOKEN}
+      - CI=1
+    command: npx expo start --tunnel
+
+
+  backend:
+    build:
+      context: ./server
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./server:/app
+      - sqlite_db:/app/db  # Mount a volume for the SQLite database
+    command: python manage.py runserver 0.0.0.0:8000
+
+volumes:
+  sqlite_db:
