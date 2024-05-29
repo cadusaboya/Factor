@@ -14,7 +14,7 @@ import { useAuth } from '@/hooks/useAuth';
 export default function Hospitals() {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
-  const API_URL = 'https://factor-cadusaboya.loca.lt';
+  const API_URL = 'http://factor-backend-1480867072.sa-east-1.elb.amazonaws.com:8000';
   const { token } = useAuth(); // Retrieve the token using the useAuth hook
 
   const [checkboxStates, setCheckboxStates] = useState({

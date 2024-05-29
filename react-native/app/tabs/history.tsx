@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 export default function History() {
   const [transactions, setTransactions] = useState([]);
-  const API_URL = 'https://factor-cadusaboya.loca.lt';
+  const API_URL = 'http://factor-backend-1480867072.sa-east-1.elb.amazonaws.com:8000';
   const { token } = useAuth();
   const { width, height } = useWindowDimensions(); // Get the window width
 
