@@ -27,15 +27,10 @@ SECRET_KEY = 'django-insecure-=uhmh%1)*^l_pk51fc00#t6ckt=^f9j)li9^&-=0b36awcfyg7
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '192.168.0.8',
-    '0.0.0.0',
-    '192.168.100.11',
+    'factor-backend-1480867072.sa-east-1.elb.amazonaws.com',
     'localhost',
     '127.0.0.1',
-    'factor-cadusaboya.loca.lt',
-    'exp://jqpzlmg-cadusaboya-8081.exp.direct',
-    r'^https?://jqpzlmg-cadusaboya-8081\.exp\.direct$',
-    'https://factor-cadusaboya.loca.lt'
+    '0.0.0.0',
 ]
 
 
