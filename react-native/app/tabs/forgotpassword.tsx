@@ -14,7 +14,7 @@ export default function ForgotPassword() {
   const navigation = useNavigation();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-  const API_URL = 'https://factor-cadusaboya.loca.lt:8000';
+  const API_URL = 'http://factor-backend-1480867072.sa-east-1.elb.amazonaws.com:8000';
 
   const handleForgot = async (data) => {
     setIsButtonDisabled(true);
