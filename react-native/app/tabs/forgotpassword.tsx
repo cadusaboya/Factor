@@ -9,51 +9,38 @@ import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
 
-export default function Login() {
+export default function ForgotPassword() {
   const { setValue, handleSubmit } = useForm();
   const navigation = useNavigation();
-  const { login } = useAuth();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-  const API_URL = 'http://factor-backend-1480867072.sa-east-1.elb.amazonaws.com:8000';
+  const API_URL = 'https://factor-cadusaboya.loca.lt:8000';
 
-  const handleLogin = async (data) => {
+  const handleForgot = async (data) => {
     setIsButtonDisabled(true);
-
+  
     try {
-      const res = await axios.post(`${API_URL}/accounts/login/`, data);
-      if (res.data.message === 'Login successful') {
-        const token = res.data.token;
-        await login(token);
-        setIsButtonDisabled(false);
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: 'Home' }],
-          })
-        );
+      const res = await axios.post(`${API_URL}/password_reset/`, data);
+      if (res.status === 200) {
+        Alert.alert('Success', 'Password reset email sent successfully');
+        // Navigate to a success page or display a message to the user
       } else {
-        Alert.alert('Erro', 'Dados incorretos');
+        Alert.alert('Error', 'Failed to send password reset email');
       }
     } catch (error) {
-      console.error('Error during login:', error);
-      Alert.alert('Erro', 'Houve um erro durante sua solicitação, tente novamente mais tarde');
+      console.error('Error sending password reset request:', error);
+      Alert.alert('Error', 'Failed to send password reset request. Please try again later.');
     } finally {
       setIsButtonDisabled(false);
     }
   };
 
   const onSubmit = (data) => {
-    handleLogin(data);
-  };
-
-  const handleForgotPassword = () => {
-    // Navigate to the Forgot Password route
-    navigation.navigate('Esqueci minha senha');
+    handleForgot(data);
   };
 
   const usernameRef = useRef();
-  const passwordRef = useRef();
+  const emailRef = useRef();
 
   return (
     <View style={styles.container}>
@@ -63,7 +50,7 @@ export default function Login() {
           style={styles.input}
           onChangeText={(text) => setValue('username', text)}
           returnKeyType="next"
-          onSubmitEditing={() => passwordRef.current.focus()}
+          onSubmitEditing={() => emailRef.current.focus()}
           blurOnSubmit={false}
           ref={usernameRef}
         />
@@ -71,21 +58,18 @@ export default function Login() {
 
       <View style={styles.box}>
         <TextInput
-          label="Senha"
-          style={styles.input}
-          onChangeText={(text) => setValue('password', text)}
-          secureTextEntry={true}
-          returnKeyType="done"
-          ref={passwordRef}
+            label="E-mail"
+            style={styles.input}
+            onChangeText={(text) => setValue('email', text)}
+            keyboardType="email-address"
+            returnKeyType="done"
+            ref={emailRef}
         />
-        <TouchableOpacity onPress={handleForgotPassword}>
-          <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
         <ButtonSolid
-          title={'Entrar'}
+          title={'Recuperar Senha'}
           useColor={'rgb(0, 0, 0)'}
           onPress={handleSubmit(onSubmit)}
           disabled={isButtonDisabled}
@@ -110,11 +94,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     padding: 8,
     backgroundColor: '#E7E7E7',
-  },
-  forgotPassword: {
-    marginTop: 8,
-    alignSelf: 'flex-end',
-    color: 'blue', // You can change the color as needed
   },
   input: {
     backgroundColor: 'white',

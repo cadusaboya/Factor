@@ -11,6 +11,7 @@ import Header from '@/components/Header';
 import Register from './tabs/register';
 import Welcome from './tabs/welcome';
 import Login from './tabs/login';
+import ForgotPassword from './tabs/forgotpassword';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,7 @@ const AppNavigator = () => {
       <Stack.Screen name="Welcome" component={Welcome} />
       <Stack.Screen name="Registro" component={Register} />
       <Stack.Screen name="Entrar" component={Login} />
+      <Stack.Screen name="Esqueci minha senha" component={ForgotPassword} />
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Antecipação" component={Antecipacao} />
       <Stack.Screen name="Meus Pedidos" component={History} />
