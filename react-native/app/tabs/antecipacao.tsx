@@ -109,7 +109,11 @@ export default function Antecipacao() {
   };
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return (
+      <View style={styles.load_container}>
+          <ActivityIndicator size="large" color="#b5b5b5" />
+      </View>
+  )
   }
 
   return (
@@ -174,6 +178,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: width * 0.05,
   },
+
+  load_container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
   option: {
     flexDirection: 'row',
     alignItems: 'center',

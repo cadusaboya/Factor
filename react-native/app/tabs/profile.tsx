@@ -65,8 +65,11 @@ export default function Profile() {
     };
 
     if (!userData) {
-        // If user data is not yet available, display loading indicator or placeholder
-        return <ActivityIndicator />;
+        return (
+            <View style={styles.load_container}>
+                <ActivityIndicator size="large" color="#b5b5b5" />
+            </View>
+        )
     }
 
     return (
@@ -122,6 +125,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#E7E7E7',
+    },
+
+    load_container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
     table: {
