@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Text, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, useWindowDimensions, ActivityIndicator } from 'react-native';
 import WhiteBox from '@/components/whiteBox';
 import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,6 +9,8 @@ export default function History() {
   const API_URL = 'http://factor-backend-1480867072.sa-east-1.elb.amazonaws.com:8000';
   const { token } = useAuth();
   const { width, height } = useWindowDimensions(); // Get the window width
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -20,13 +22,23 @@ export default function History() {
           }
         });
         setTransactions(response.data);
+        setLoading(false);
       } catch (error) {
         console.error('Failed to fetch transactions:', error);
+        setLoading(false);
       }
     };
 
     fetchTransactions();
   }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.load_container}>
+          <ActivityIndicator size="large" color="#b5b5b5" />
+      </View>
+  )
+  }
 
   return (
     <View style={styles.container}>
@@ -54,8 +66,8 @@ export default function History() {
           
           <WhiteBox width={width * 0.9} height={height * 0.6} innerContainerPadding={0} borderRadius={0}>
             <ScrollView>
-              {transactions.map((transaction) => (
-                <View key={transaction.id} style={styles.row}>
+              {transactions.map((transaction, index) => (
+                <View key={index} style={styles.row}>
                   <View style={styles.cell}>
                     <Text>{transaction.date}</Text>
                   </View>
@@ -85,6 +97,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#E7E7E7',
     alignItems: 'center',
   },
+
+  load_container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+},
 
   box: {
     marginVertical: 20,
