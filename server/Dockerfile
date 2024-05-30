@@ -15,9 +15,6 @@ RUN pip install -r requirements.txt
 # Copy the backend application code into the container at /app
 COPY . .
 
-# Mount a volume for the SQLite database
-VOLUME /app/db
-
 # Expose port 8000 to the outside world
 EXPOSE 8000
 

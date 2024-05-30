@@ -41,6 +41,10 @@ coverage.xml
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# settings.py
+server/settings.py
+
+
 # Virtual environment
 env/
 venv/
