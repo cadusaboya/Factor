@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '0.0.0.0',
+    'factor-cadusaboya.loca.lt',
 ]
 
 
@@ -96,12 +97,8 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',  # Your database name
-        'USER': 'postgres',      # Your RDS master username
-        'PASSWORD': 'Bds0I1FawnHANWUTcEyC',  # Your RDS master password
-        'HOST': 'factor.cfw6y6mikr73.sa-east-1.rds.amazonaws.com',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -158,3 +155,14 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+# EMAIL
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtpout.secureserver.net'  # O host SMTP fornecido pelo seu provedor de email
+EMAIL_PORT = 465  # Porta SMTP, geralmente 465 para SSL
+EMAIL_USE_SSL = True  # Use SSL para segurança
+EMAIL_USE_TLS = False  # TLS deve ser False se SSL for True
+EMAIL_HOST_USER = 'suporte@factorpa.xyz'  # Seu email completo
+EMAIL_HOST_PASSWORD = 'AbCdEfGhI'  # A senha do seu email
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

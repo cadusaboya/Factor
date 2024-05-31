@@ -20,7 +20,7 @@ export default function ForgotPassword() {
     setIsButtonDisabled(true);
   
     try {
-      const res = await axios.post(`${API_URL}/password_reset/`, data);
+      const res = await axios.post(`${API_URL}/accounts/password_reset/`, data);
       if (res.status === 200) {
         Alert.alert('Success', 'Password reset email sent successfully');
         // Navigate to a success page or display a message to the user

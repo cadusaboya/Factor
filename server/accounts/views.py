@@ -12,6 +12,14 @@ from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
 from rest_framework.permissions import IsAuthenticated # type: ignore
 from .services import update_user_cash
 
+from django.shortcuts import redirect
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from .models import User
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
 @api_view(['POST'])
 def login(request):
     """
@@ -78,5 +86,31 @@ def user_hospitals(request):
     hospitals = user.hospitals.all()  # Assuming 'hospitals' is the related name of the ManyToMany field
     hospital_ids = [hospital.id for hospital in hospitals]
     return Response(hospital_ids)
+
+@api_view(['POST'])
+def password_reset(request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+
+    # Check if a user with the provided username or email exists
+    try:
+        user = User.objects.get(username=username, email=email)
+
+        # Generate a token for password reset
+        token_generator = PasswordResetTokenGenerator()
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = token_generator.make_token(user)
+        # Send password reset email
+        reset_url = f'http://factorpa.xyz/reset-password/{uid}/{token}' # Need to build this
+        send_mail(
+            'Password Reset Request',
+            f'Click the following link to reset your password: {reset_url}',
+            'suporte@factorpa.xyz',
+            [user.email],
+            fail_silently=False,
+        )
+        return JsonResponse({'message': 'Password reset email sent'}, status=200)  # You can customize the response message as needed
+    except:
+        return JsonResponse({'error': 'User does not exist'}, status=400)
 
     
