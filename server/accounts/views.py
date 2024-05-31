@@ -11,14 +11,14 @@ from django.contrib.auth import authenticate # type: ignore
 from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
 from rest_framework.permissions import IsAuthenticated # type: ignore
 from .services import update_user_cash
-
-from django.shortcuts import redirect
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
-from django.core.mail import send_mail
-from django.http import JsonResponse
+from django.utils.encoding import force_str  # type: ignore
+from django.shortcuts import redirect # type: ignore
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode # type: ignore
+from django.utils.encoding import force_bytes # type: ignore
+from django.core.mail import send_mail # type: ignore
+from django.http import JsonResponse # type: ignore
 from .models import User
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth.tokens import PasswordResetTokenGenerator # type: ignore
 
 @api_view(['POST'])
 def login(request):
@@ -101,7 +101,7 @@ def password_reset(request):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = token_generator.make_token(user)
         # Send password reset email
-        reset_url = f'http://factorpa.xyz/reset-password/{uid}/{token}' # Need to build this
+        reset_url = f'https://cadusaboya.github.io/Forgot-Password/?uidb64={uid}&token={token}' # Need to build this
         send_mail(
             'Password Reset Request',
             f'Click the following link to reset your password: {reset_url}',
@@ -113,4 +113,21 @@ def password_reset(request):
     except:
         return JsonResponse({'error': 'User does not exist'}, status=400)
 
+@api_view(['POST'])
+def set_new_password(request, uidb64, token):
+    new_password = request.data.get('password')
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        return JsonResponse({'error': 'Invalid token'}, status=400)
+
+    token_generator = PasswordResetTokenGenerator()
+    if token_generator.check_token(user, token):
+        user.set_password(new_password)
+        user.save()
+        return JsonResponse({'message': 'Password has been reset'}, status=200)
+    else:
+        return JsonResponse({'error': 'Invalid token'}, status=400)
     

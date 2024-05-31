@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '0.0.0.0',
+    'factor-cadusaboya.loca.lt',
 ]
 
 
@@ -66,7 +67,8 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     'https://factor-cadusaboya.loca.lt',
     r'^https?://jqpzlmg-cadusaboya-8081\.exp\.direct$',
     'exp://jqpzlmg-cadusaboya-8081.exp.direct',
-    'http://factor-cadusaboya.loca.lt'
+    'http://factor-cadusaboya.loca.lt',
+    'https://cadusaboya.github.io'
 ]
 
 
