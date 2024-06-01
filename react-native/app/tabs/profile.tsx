@@ -12,7 +12,7 @@ const { width } = Dimensions.get('window');
 export default function Profile() {
     const navigation = useNavigation();
     const [userData, setUserData] = useState(null);
-    const API_URL = 'http://factor-backend-1480867072.sa-east-1.elb.amazonaws.com:8000';
+    const API_URL = 'https://api.factorpa.xyz';
     const { token, logout } = useAuth(); // Retrieve the token using the useAuth hook
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 

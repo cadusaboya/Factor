@@ -12,7 +12,7 @@ export default function Register() {
   const { register, setValue, handleSubmit, setError, clearErrors, formState: { errors } } = useForm();
   const navigation = useNavigation();
 
-  const API_URL = 'http://factor-backend-1480867072.sa-east-1.elb.amazonaws.com:8000';
+  const API_URL = 'https://api.factorpa.xyz';
 
   const handleCreateUser = async (data) => {
     try {

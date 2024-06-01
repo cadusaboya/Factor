@@ -9,7 +9,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-  const API_URL = 'http://factor-backend-1480867072.sa-east-1.elb.amazonaws.com:8000';
+  const API_URL = 'https://api.factorpa.xyz';
   const { token } = useAuth();
 
   const [userData, setUserData] = useState(null);
