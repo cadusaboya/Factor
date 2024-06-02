@@ -129,5 +129,5 @@ def set_new_password(request, uidb64, token):
         user.save()
         return JsonResponse({'message': 'Password has been reset'}, status=200)
     else:
-        return JsonResponse({'error': 'Invalid token'}, status=400)
+        return JsonResponse({'error': 'Invalid token'}, status=405)
     

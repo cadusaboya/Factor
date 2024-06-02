@@ -25,7 +25,7 @@ def user_tasks(request):
 def update_tasks(request):
     try:
         task_ids = request.data.get('tasks')
-        # Update tasks: Set is_completed to True for the specified task IDs
+         # Update tasks: Set is_completed to True for the specified task IDs
         Task.objects.filter(id__in=task_ids).update(is_completed=True)
         return Response({'message': 'Tasks updated successfully.'})
     except Exception as e:
