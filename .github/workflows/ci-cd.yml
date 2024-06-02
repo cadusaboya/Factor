@@ -42,15 +42,12 @@ jobs:
 
       - name: Create service in Amazon ECS
         env:
-            CLUSTER_NAME: factor-fargate
-            SERVICE_NAME: factor-backend
-            TASK_DEFINITION: factor-backend-ec2:10
+          CLUSTER_NAME: factor-fargate
+          SERVICE_NAME: factor-backend
+          TASK_DEFINITION: factor-backend-ec2:10
+          SUBNET_ID_1: subnet-0e1458656ee58eb5d
+          SUBNET_ID_2: subnet-0aab9df9cb8ae1afa
+          SUBNET_ID_3: subnet-027958eaccb5b11f4
+          SECURITY_GROUP_ID: sg-0a13c4e66fd0762e2
         run: |
-            aws ecs create-service --cluster $CLUSTER_NAME --service-name $SERVICE_NAME --task-definition $TASK_DEFINITION --desired-count 1
-
-      - name: Update service in Amazon ECS
-        env:
-            CLUSTER_NAME: factor-fargate
-            SERVICE_NAME: factor-backend
-        run: |
-            aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --desired-count 1
+          aws ecs create-service --cluster $CLUSTER_NAME --service-name $SERVICE_NAME --task-definition $TASK_DEFINITION --desired-count 1 --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_ID_1,$SUBNET_ID_2,$SUBNET_ID_3],securityGroups=[$SECURITY_GROUP_ID]}"
