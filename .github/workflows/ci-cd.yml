@@ -50,4 +50,4 @@ jobs:
           SUBNET_ID_3: subnet-027958eaccb5b11f4
           SECURITY_GROUP_ID: sg-0a13c4e66fd0762e2
         run: |
-          aws ecs create-service --cluster $CLUSTER_NAME --service-name $SERVICE_NAME --task-definition $TASK_DEFINITION --desired-count 1 --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_ID_1,$SUBNET_ID_2,$SUBNET_ID_3],securityGroups=[$SECURITY_GROUP_ID],assignPublicIp=ENABLED}"
+          aws ecs create-service --cluster $CLUSTER_NAME --service-name $SERVICE_NAME --task-definition $TASK_DEFINITION --desired-count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_ID_1,$SUBNET_ID_2,$SUBNET_ID_3],securityGroups=[$SECURITY_GROUP_ID],assignPublicIp=ENABLED}"
