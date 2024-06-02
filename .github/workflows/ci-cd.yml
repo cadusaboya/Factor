@@ -30,6 +30,7 @@ jobs:
       - name: Run tests
         run: |
           python manage.py test
+        working-directory: Server
 
   build-and-deploy:
     needs: build-and-test
