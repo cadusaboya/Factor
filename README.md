@@ -1,7 +1,5 @@
 Hello guys,
 
-In this branch we are developing a duty management system for hospitals, this will allow me to automate receiving the information to what duties I can pay to the doctors to receive from the hospital later.
+In this branch we are focusing in improving the welcome page. The idea is to have 3 images switching every few seconds.
 
-It would also help the hospitals control their doctors and allow doctors to see their work schedule at the hospital with ease.
-
-If I get this working I'll for sure be able to sell this product easier
+I'm setting up every upgrade on a different branch to stop pushing directly to main as its best practices.
