@@ -29,8 +29,9 @@ jobs:
 
       - name: Run tests
         run: |
+          cd Server
           python manage.py test
-        working-directory: Server
+        shell: bash
 
   build-and-deploy:
     needs: build-and-test
