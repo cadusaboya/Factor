@@ -29,7 +29,7 @@ jobs:
 
       - name: Run tests
         run: |
-          cd Server
+          cd Factor/server
           python manage.py test
 
   build-and-deploy:
