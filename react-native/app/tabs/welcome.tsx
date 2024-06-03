@@ -23,7 +23,7 @@ export default function Welcome() {
     ];
 
     const subtexts = [
-        'Assim que sua requisição for aprovada, obtenha saldo para sacar imediatamente',
+        'Receba o pagamento pelo plantão no mesmo dia em que ele é realizado',
         'Acompanhe a sua agenda de plantões de maneira eficiente',
         'Obtenha relatórios detalhados sobre os seus plantões e ganhos'
     ];
