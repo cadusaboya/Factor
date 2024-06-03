@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions, Animated, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Dimensions, Animated, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import ph_1 from '@/assets/images/placeholder_1.png';
+import ph_2 from '@/assets/images/placeholder_2.png';
+import ph_3 from '@/assets/images/placeholder_3.png';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,6 +17,8 @@ export default function Welcome() {
         'Para facilitar a vida dos médicos',
         'Em Breve'
     ];
+
+    const images = [ph_1, ph_2, ph_3];
 
     useEffect(() => {
         // Initial delay before starting the fade-out sequence
@@ -33,7 +38,6 @@ export default function Welcome() {
                     useNativeDriver: true,
                 }),
                 Animated.delay(3000), // Wait for 3 seconds
-
                 Animated.timing(fadeAnim, {
                     toValue: 0, // Fade out
                     duration: 1000,
@@ -58,8 +62,9 @@ export default function Welcome() {
     return (
         <View style={styles.container}>
             <View style={styles.center}>
-                <Animated.View style={{ opacity: fadeAnim }}>
+                <Animated.View style={[styles.center_animation, { opacity: fadeAnim }]}>
                     <Text style={styles.saldo}>{texts[textIndex]}</Text>
+                    <Image source={images[textIndex]} style={[styles.image]} resizeMode="contain" />
                 </Animated.View>
                 
                 <View style={styles.buttonContainer}>
@@ -86,12 +91,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#E7E7E7',
     },
+    image: {
+        marginTop: height * 0.01,
+        marginBottom: height * 0.1,
+    },
     saldo: {
         color: 'black',
-        marginTop: height * 0.25, // 25% from top
-        marginBottom: height * 0.28, // 3% from bottom
+        marginTop: height * 0.08, // 15% from top
         fontSize: width * 0.06, // Font size based on screen width
-        fontWeight: 'bold',
         textAlign: 'center', // Center text horizontally
         lineHeight: height * 0.04,
     },
@@ -117,5 +124,9 @@ const styles = StyleSheet.create({
         alignItems: 'center', // Center content horizontally
         justifyContent: 'center', // Center content vertically
         flex: 1, // Take up full height of screen
+    },
+    center_animation: {
+        alignItems: 'center', // Center content horizontally
+        justifyContent: 'center', // Center content vertically
     },
 });
