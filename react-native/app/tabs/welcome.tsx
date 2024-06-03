@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, Dimensions, Animated, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import * as SplashScreen from 'expo-splash-screen';
+import { Asset } from 'expo-asset';
 import ph_1 from '@/assets/images/placeholder_1.png';
 import ph_2 from '@/assets/images/placeholder_2.png';
 import ph_3 from '@/assets/images/placeholder_3.png';
 
 const { width, height } = Dimensions.get('window');
+
+SplashScreen.preventAutoHideAsync();
 
 export default function Welcome() {
     const navigation = useNavigation();
@@ -13,14 +17,35 @@ export default function Welcome() {
     const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity value is 1
 
     const texts = [
-        'Factor',
-        'Para facilitar a vida dos médicos',
-        'Em Breve'
+        'Receba imediatamente',
+        'Tudo ao seu alcance',
+        'Relatórios'
     ];
 
-    const images = [ph_1, ph_2, ph_3];
+    const subtexts = [
+        'Assim que sua requisição for aprovada, obtenha saldo para sacar imediatamente',
+        'Acompanhe a sua agenda de plantões de maneira eficiente',
+        'Obtenha relatórios detalhados sobre os seus plantões e ganhos'
+    ];
+
+    const images = [ph_3, ph_2, ph_1];
 
     useEffect(() => {
+        async function loadResourcesAndDataAsync() {
+            try {
+                // Preload images
+                await Promise.all([
+                    Asset.loadAsync([ph_3, ph_2, ph_1]),
+                ]);
+            } catch (e) {
+                console.warn(e);
+            } finally {
+                SplashScreen.hideAsync();
+            }
+        }
+
+        loadResourcesAndDataAsync();
+
         // Initial delay before starting the fade-out sequence
         const initialDelay = setTimeout(() => {
             Animated.timing(fadeAnim, {
@@ -64,6 +89,7 @@ export default function Welcome() {
             <View style={styles.center}>
                 <Animated.View style={[styles.center_animation, { opacity: fadeAnim }]}>
                     <Text style={styles.saldo}>{texts[textIndex]}</Text>
+                    <Text style={styles.saldo2}>{subtexts[textIndex]}</Text>
                     <Image source={images[textIndex]} style={[styles.image]} resizeMode="contain" />
                 </Animated.View>
                 
@@ -93,17 +119,28 @@ const styles = StyleSheet.create({
     },
     image: {
         marginTop: height * 0.01,
-        marginBottom: height * 0.1,
+        marginBottom: height * 0.05,
+        height: height * 0.3, // 30% of screen height
+        width: width * 0.5, // 50% of screen width
     },
     saldo: {
         color: 'black',
-        marginTop: height * 0.08, // 15% from top
+        marginTop: height * 0.08, // 8% from top
         fontSize: width * 0.06, // Font size based on screen width
         textAlign: 'center', // Center text horizontally
+        fontWeight: 'bold',
         lineHeight: height * 0.04,
+    },
+    saldo2: {
+        color: 'black',
+        fontSize: width * 0.04, // Font size based on screen width
+        textAlign: 'center', // Center text horizontally
+        paddingHorizontal: width * 0.05,
+        marginVertical: height * 0.02,
     },
     buttonContainer: {
         alignItems: 'center', // Center buttons horizontally
+        marginTop: height * 0.05,
     },
     button: {
         width: width * 0.8, // Adjust button width to 80% of screen width
@@ -112,7 +149,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,
-        marginVertical: height * 0.015, // 1.5% of screen height
+        marginBottom: height * 0.015, // 1.5% of screen height
     },
     buttonText: {
         color: 'white',
