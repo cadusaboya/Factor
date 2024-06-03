@@ -1,12 +1,54 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, TouchableOpacity, Dimensions, Animated, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { ThemedText } from '@/components/ThemedText';
 
 const { width, height } = Dimensions.get('window');
 
 export default function Welcome() {
     const navigation = useNavigation();
+    const [textIndex, setTextIndex] = useState(0);
+    const fadeAnim = useRef(new Animated.Value(1)).current; // Initial opacity value is 1
+
+    const texts = [
+        'Factor',
+        'Para facilitar a vida dos médicos',
+        'Em Breve'
+    ];
+
+    useEffect(() => {
+        // Initial delay before starting the fade-out sequence
+        const initialDelay = setTimeout(() => {
+            Animated.timing(fadeAnim, {
+                toValue: 0, // Fade out
+                duration: 1000,
+                useNativeDriver: true,
+            }).start();
+        }, 4000); // Wait for 4 seconds before starting the fade-out
+
+        const interval = setInterval(() => {
+            Animated.sequence([
+                Animated.timing(fadeAnim, {
+                    toValue: 1, // Fade in
+                    duration: 1000,
+                    useNativeDriver: true,
+                }),
+                Animated.delay(3000), // Wait for 3 seconds
+
+                Animated.timing(fadeAnim, {
+                    toValue: 0, // Fade out
+                    duration: 1000,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+
+            setTextIndex(prevIndex => (prevIndex + 1) % texts.length);
+        }, 5000);
+
+        return () => {
+            clearTimeout(initialDelay);
+            clearInterval(interval);
+        };
+    }, [fadeAnim, texts.length]);
 
     const handleButtonPress = (menu) => {
         console.log(`Navigating to ${menu}`);
@@ -16,21 +58,22 @@ export default function Welcome() {
     return (
         <View style={styles.container}>
             <View style={styles.center}>
-                <ThemedText style={styles.saldo}>Em breve, Factor</ThemedText>
-                <ThemedText style={styles.saldo2}>Criada para facilitar a vida dos médicos</ThemedText>
+                <Animated.View style={{ opacity: fadeAnim }}>
+                    <Text style={styles.saldo}>{texts[textIndex]}</Text>
+                </Animated.View>
                 
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => handleButtonPress('Registro')}
                     >
-                        <ThemedText style={styles.buttonText}>Criar Conta</ThemedText>
+                        <Text style={styles.buttonText}>Criar Conta</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => handleButtonPress('Entrar')}
                     >
-                        <ThemedText style={styles.buttonText}>Já sou usuário</ThemedText>
+                        <Text style={styles.buttonText}>Já sou usuário</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -46,16 +89,9 @@ const styles = StyleSheet.create({
     saldo: {
         color: 'black',
         marginTop: height * 0.25, // 25% from top
-        marginBottom: height * 0.03, // 5% from bottom
+        marginBottom: height * 0.28, // 3% from bottom
         fontSize: width * 0.06, // Font size based on screen width
         fontWeight: 'bold',
-        textAlign: 'center', // Center text horizontally
-        lineHeight: height * 0.04,
-    },
-    saldo2: {
-        color: 'black',
-        marginBottom: height * 0.25, // 25% from bottom
-        fontSize: width * 0.05, // Font size based on screen width
         textAlign: 'center', // Center text horizontally
         lineHeight: height * 0.04,
     },
@@ -63,7 +99,7 @@ const styles = StyleSheet.create({
         alignItems: 'center', // Center buttons horizontally
     },
     button: {
-        width: width * 0.8, // Adjust button width to 80% of screen width,
+        width: width * 0.8, // Adjust button width to 80% of screen width
         height: height * 0.07, // 7% of screen height
         backgroundColor: '#1c1b1b',
         justifyContent: 'center',
