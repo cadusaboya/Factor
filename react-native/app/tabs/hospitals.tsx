@@ -144,6 +144,8 @@ export default function Hospitals() {
             onPress={handleButtonPress}
             disabled={isButtonDisabled}  // Disable the button based on state
             style={styles.button}
+            borderRadius={width * 0.1}
+            textStyle={styles.buttonText}
           />
         </View>
       </ScrollView>
@@ -198,4 +200,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  buttonText: {
+    fontWeight: 'bold'
+},
 });

@@ -115,6 +115,7 @@ export default function Profile() {
                     onPress={handleLogout}
                     disabled={isButtonDisabled}  // Disable the button based on stat
                     style={styles.button}
+                    textStyle={styles.buttonText}
                 />
             </View>
         </View>
@@ -165,6 +166,10 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 3.84,
         elevation: 5,
-    }
+    },
+
+    buttonText: {
+        fontWeight: 'bold',
+    },
 
 });

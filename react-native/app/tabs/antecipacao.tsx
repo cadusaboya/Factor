@@ -161,11 +161,12 @@ export default function Antecipacao() {
 
       <View style={styles.but}>
         <ButtonSolid
-          title={'Confirmar antecipação'}
+          title={'Confirmar'}
           useColor={'rgb(0, 0, 0)'}
           onPress={handleButtonPress}
           disabled={isButtonDisabled}
           style={styles.button}
+          textStyle={styles.buttonText}
         />
       </View>
     </View>
@@ -235,4 +236,9 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  
+  buttonText: {
+    fontWeight: 'bold'
+  },
+
 });
