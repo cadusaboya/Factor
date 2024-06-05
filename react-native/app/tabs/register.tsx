@@ -163,6 +163,7 @@ export default function Register() {
             useColor={'rgb(0, 0, 0)'}
             onPress={handleSubmit(onSubmit)}
             style={styles.button}
+            textStyle={styles.buttonText}
           />
         </View>
       </ScrollView>
@@ -202,6 +203,7 @@ const styles = StyleSheet.create({
     marginVertical: height * 0.05, // 5% of screen height
     marginHorizontal: width * 0.2, // 20% of screen width
   },
+
   button: {
     height: height * 0.07, // 7% of screen height
     justifyContent: 'center',
@@ -217,5 +219,9 @@ const styles = StyleSheet.create({
       shadowOpacity: 0.3,
       shadowRadius: 3.84,
       elevation: 5,
+  },
+
+  buttonText: {
+    fontWeight: 'bold',
   },
 });
