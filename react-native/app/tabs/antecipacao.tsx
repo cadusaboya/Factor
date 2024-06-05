@@ -165,6 +165,7 @@ export default function Antecipacao() {
           useColor={'rgb(0, 0, 0)'}
           onPress={handleButtonPress}
           disabled={isButtonDisabled}
+          style={styles.button}
         />
       </View>
     </View>
@@ -218,5 +219,20 @@ const styles = StyleSheet.create({
   },
   checkbox: {
     marginTop: height * 0.035,
+  },
+
+  button: {
+    borderRadius: 10,
+    width: width * 0.8,
+
+    // Add these lines to add shading
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });

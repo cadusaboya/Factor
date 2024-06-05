@@ -73,6 +73,7 @@ export default function ForgotPassword() {
           useColor={'rgb(0, 0, 0)'}
           onPress={handleSubmit(onSubmit)}
           disabled={isButtonDisabled}
+          style={styles.button}
         />
       </View>
     </View>
@@ -101,5 +102,18 @@ const styles = StyleSheet.create({
     borderWidth: 0.2,
     height: height * 0.08, // 8% of screen height
     borderRadius: 4,
+  },
+  button: {
+    borderRadius: 10,
+
+      // Add these lines to add shading
+      shadowColor: "#000",
+      shadowOffset: {
+          width: 0,
+          height: 2,
+      },
+      shadowOpacity: 0.3,
+      shadowRadius: 3.84,
+      elevation: 5,
   },
 });

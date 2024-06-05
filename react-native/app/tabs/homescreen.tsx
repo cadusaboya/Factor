@@ -140,6 +140,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: width * 0.2, // 50% of button width for circular buttons
     marginHorizontal: width * 0.02, // 2% of screen width
+
+    // Add these lines to add shading
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonText: {
     color: 'white',
