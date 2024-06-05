@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Alert, Image, useWindowDimensions } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import { Asset } from 'expo-asset';
 import { Text } from '@rneui/themed';
 import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
@@ -26,6 +28,22 @@ export default function Hospitals() {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   useEffect(() => {
+
+      async function loadResourcesAndDataAsync() {
+          try {
+              // Preload images
+              await Promise.all([
+                  Asset.loadAsync([HPDImage, CSTImage, STImage]),
+              ]);
+          } catch (e) {
+              console.warn(e);
+          } finally {
+              SplashScreen.hideAsync();
+          }
+      }
+
+    loadResourcesAndDataAsync();
+
     // Fetch the hospitals the logged-in user works on
     axios.get(`${API_URL}/accounts/user/hospitals/`, {
       headers: {

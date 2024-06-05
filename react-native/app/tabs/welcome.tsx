@@ -28,14 +28,14 @@ export default function Welcome() {
         'Obtenha relatórios detalhados sobre os seus plantões e ganhos'
     ];
 
-    const images = [ph_3, ph_2, ph_1];
+    const images = [ph_1, ph_2, ph_3];
 
     useEffect(() => {
         async function loadResourcesAndDataAsync() {
             try {
                 // Preload images
                 await Promise.all([
-                    Asset.loadAsync([ph_3, ph_2, ph_1]),
+                    Asset.loadAsync([ph_1, ph_2, ph_3]),
                 ]);
             } catch (e) {
                 console.warn(e);
