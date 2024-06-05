@@ -206,6 +206,16 @@ const styles = StyleSheet.create({
     height: height * 0.07, // 7% of screen height
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 4,
+    borderRadius: 10,
+
+      // Add these lines to add shading
+      shadowColor: "#000",
+      shadowOffset: {
+          width: 0,
+          height: 2,
+      },
+      shadowOpacity: 0.3,
+      shadowRadius: 3.84,
+      elevation: 5,
   },
 });

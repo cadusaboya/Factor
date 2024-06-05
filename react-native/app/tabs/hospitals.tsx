@@ -143,6 +143,7 @@ export default function Hospitals() {
             useColor={'rgb(0, 0, 0)'}
             onPress={handleButtonPress}
             disabled={isButtonDisabled}  // Disable the button based on state
+            style={styles.button}
           />
         </View>
       </ScrollView>
@@ -182,5 +183,19 @@ const styles = StyleSheet.create({
     height: 0.3,
     backgroundColor: 'black',
     marginBottom: 20,
+  },
+
+  button: {
+    borderRadius: 10,
+
+    // Add these lines to add shading
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });

@@ -148,8 +148,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#1c1b1b',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 4,
+        borderRadius: 20,
         marginBottom: height * 0.015, // 1.5% of screen height
+
+        // Add these lines to add shading
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     buttonText: {
         color: 'white',

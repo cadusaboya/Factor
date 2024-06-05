@@ -112,9 +112,9 @@ export default function Profile() {
                 <ButtonSolid
                     title={'Sair'}
                     useColor={'rgb(200, 0, 0)'}
-                    borderRadius={width * 0.1} // Adjust button border radius
                     onPress={handleLogout}
                     disabled={isButtonDisabled}  // Disable the button based on stat
+                    style={styles.button}
                 />
             </View>
         </View>
@@ -152,4 +152,19 @@ const styles = StyleSheet.create({
         marginVertical: width * 0.25,
         marginHorizontal: width * 0.1,
     },
+    
+    button: {
+        borderRadius: width * 0.1,
+
+        // Add these lines to add shading
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 3.84,
+        elevation: 5,
+    }
+
 });
