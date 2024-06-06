@@ -12,26 +12,35 @@ class ViewTestCase(TestCase):
         self.client = APIClient()
         self.user = User.objects.create(username="testuser", 
                                         email="teste@gmail.com", 
+                                        password="12345",
                                         fullname="Test User", 
                                         cash=100.00, 
                                         cpf="12345678901", 
                                         telefone="1234567890")
-        self.user.set_password('12345')
+        self.user.save()
         self.hospital = Hospital.objects.create(name='Test Hospital')
         self.user.hospitals.add(self.hospital)
 
         self.client.force_authenticate(user=self.user)
 
     def test_login(self):
-        response = self.client.post(reverse('login'), {'username': 'testuser', 'password': '12345'})
+        self.userlogin = User.objects.create(username="newtestuser", 
+                                email="novoteste@gmail.com", 
+                                fullname="Test User Tres", 
+                                cash=350.00, 
+                                cpf="12345678902", 
+                                telefone="1234567892")
+        self.userlogin.set_password('123456')
+        self.userlogin.save()
+        response = self.client.post(reverse('login'), {'username': 'newtestuser', 'password': '123456'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_register(self):
         response = self.client.post(reverse('register'), {'username': 'new_user', 
                                                             'password': 'password', 
                                                             'email': 'test@example.com', 
-                                                            'fullname': 'test user', 
-                                                            'cpf': '12345678901', 
+                                                            'fullname': 'test user2', 
+                                                            'cpf': '01234567890', 
                                                             'telefone': '1234567890'})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
