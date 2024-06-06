@@ -1,0 +1,54 @@
+name: Deploy Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+  
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: sa-east-1
+        
+        - name: Log in to Amazon ECR
+          id: login-ecr
+          uses: aws-actions/amazon-ecr-login@v1
+  
+        - name: Build, tag, and push Docker image to Amazon ECR
+          env:
+            ECR_REPOSITORY: factor-backend
+            IMAGE_TAG: latest
+            AWS_REGION: sa-east-1
+            AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          run: |
+            cd server
+            docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+            docker tag $ECR_REPOSITORY:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+            docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+  
+        - name: Create service in Amazon ECS
+          env:
+            CLUSTER_NAME: factor-fargate
+            SERVICE_NAME: factor-backend
+            TASK_DEFINITION: factor-backend-ec2:10
+            SUBNET_ID_1: subnet-0e1458656ee58eb5d
+            SUBNET_ID_2: subnet-0aab9df9cb8ae1afa
+            SUBNET_ID_3: subnet-027958eaccb5b11f4
+            SECURITY_GROUP_ID: sg-0a13c4e66fd0762e2
+          run: |
+            if aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME; then
+                aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $TASK_DEFINITION
+            else
+                aws ecs create-service --cluster $CLUSTER_NAME --service-name $SERVICE_NAME --task-definition $TASK_DEFINITION --desired-count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_ID_1,$SUBNET_ID_2,$SUBNET_ID_3],securityGroups=[$SECURITY_GROUP_ID],assignPublicIp=ENABLED}"
+            fi
