@@ -4,6 +4,7 @@ import { useNavigation, useFocusEffect, CommonActions } from '@react-navigation/
 import { ThemedText } from '@/components/ThemedText';
 import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
+import { Icon } from '@rneui/themed';
 
 const { width, height } = Dimensions.get('window');
 
@@ -92,28 +93,48 @@ export default function HomeScreen() {
 
       <View style={styles.center}>
         <View style={styles.row}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleButtonPress('Antecipação')}>
-            <Text style={styles.buttonText}>Antecipação</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleButtonPress('Meus Pedidos')}>
+          <View style={styles.supPosition}>
+            <Icon
+                reverse
+                name='cash-multiple'
+                type= 'material-community'
+                color='black'
+                size={82}
+                onPress={() => handleButtonPress('Antecipação')} />
+            <Text style={styles.buttonText}>Antecipar</Text>
+          </View>
+          <View style={styles.supPosition}>
+            <Icon
+                reverse
+                name='clipboard-text-clock-outline'
+                type= 'material-community'
+                color='black'
+                size={82}
+                onPress={() => handleButtonPress('Meus Pedidos')} />
             <Text style={styles.buttonText}>Meus Pedidos</Text>
-          </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.row}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={sendWhatsapp}>
+        <View style={styles.supPosition}>
+            <Icon
+                reverse
+                name='face-agent'
+                type= 'material-community'
+                color='black'
+                size={82}
+                onPress={() => handleButtonPress('Suporte')} />
             <Text style={styles.buttonText}>Suporte</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleButtonPress('Meus Hospitais')}>
-            <Text style={styles.buttonText}>Meus hospitais</Text>
-          </TouchableOpacity>
+          </View>
+          <View style={styles.supPosition}>
+            <Icon
+                reverse
+                name='hospital-building'
+                type= 'material-community'
+                color='black'
+                size={82}
+                onPress={() => handleButtonPress('Meus Hospitais')} />
+            <Text style={styles.buttonText}>Meus Hospitais</Text>
+          </View>
         </View>
       </View>
     </View>
@@ -150,14 +171,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: height * 0.05, // 5% of screen height
   },
-  button: {
-    width: width * 0.4, // 40% of screen width
-    height: width * 0.4, // Square buttons
-    backgroundColor: '#1c1b1b',
+  buttonText: {
+    color: 'black',
+    fontSize: width * 0.03, // 4% of screen width
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  center: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: width * 0.2, // 50% of button width for circular buttons
-    marginHorizontal: width * 0.02, // 2% of screen width
+    marginVertical: height * 0.05, // 5% of screen height
+  },
+  supPosition: {
+    justifyContent: 'center',
+    alignItems: 'center',
 
     // Add these lines to add shading
     shadowColor: "#000",
@@ -168,17 +196,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3.84,
     elevation: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: width * 0.04, // 4% of screen width
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: height * 0.05, // 5% of screen height
-  },
+},
 });
