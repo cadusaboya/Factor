@@ -26,15 +26,14 @@ export default function Antecipacao() {
     const fetchTasks = async () => {
       try {
         const response = await axios.get(`${API_URL}/tasks/`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
         setTasks(response.data);
         setCheckboxStates(new Array(response.data.length).fill(false));
-        setLoading(false);
       } catch (error) {
         console.error('Failed to fetch tasks:', error);
+        Alert.alert('Erro', 'Ocorreu um erro ao carregar as tarefas. Por favor, tente novamente mais tarde.');
+      } finally {
         setLoading(false);
       }
     };
@@ -43,9 +42,9 @@ export default function Antecipacao() {
   }, [API_URL, token]);
 
   const handleCheckboxChange = (index) => {
-    setCheckboxStates((prevStates) => {
+    setCheckboxStates(prevStates => {
       const newStates = [...prevStates];
-      newStates[index] = !newStates[index]; // Toggle the state of the checkbox at the specified index
+      newStates[index] = !newStates[index];
       return newStates;
     });
   };
@@ -59,50 +58,43 @@ export default function Antecipacao() {
   const handleButtonPress = async () => {
     setIsButtonDisabled(true);
 
+    const tasksToComplete = incompleteTasks.filter((task, index) => checkboxStates[index]);
+
+    if (tasksToComplete.length === 0) {
+      Alert.alert('Erro', 'Por favor, selecione ao menos um pedido de antecipação');
+      setIsButtonDisabled(false);
+      return;
+    }
+
     try {
-      const tasksToComplete = incompleteTasks.filter((task, index) => checkboxStates[index]);
-      if (!tasksToComplete.length) {
-        Alert.alert('Erro', 'Por favor, selecione ao menos um pedido de antecipação');
-        setIsButtonDisabled(false);
-        return;
-      }
-      
-      const taskIds = tasksToComplete.map(task => task.id);;
+      const taskIds = tasksToComplete.map(task => task.id);
 
       await axios.post(`${API_URL}/tasks/update/`, { tasks: taskIds }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
-      await Promise.all(tasksToComplete.map(async (task) => {
-        await axios.post(`${API_URL}/tasks/user/transactions/`, {
+      await Promise.all(tasksToComplete.map(task => (
+        axios.post(`${API_URL}/tasks/user/transactions/`, {
           task: task.id,
           date: new Date().toISOString().split('T')[0],
           antecipado: task.value,
           recebido: (task.value * 0.94).toFixed(2)
         }, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-      }));
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+      )));
 
       Alert.alert(
         'Sucesso',
         'Em breve o dinheiro será enviado para sua conta',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              navigation.navigate("Home");
-            },
-          },
-        ]
+        [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
       );
     } catch (error) {
       console.error('Failed to confirm anticipation:', error);
-      Alert.alert('Erro', 'Não foi possível confirmar a antecipação. Por favor, tente novamente.');
+      Alert.alert(
+        error.response?.status === 404 ? 'Servidor indisponível' : 'Erro inesperado',
+        'Por favor, tente novamente mais tarde.'
+      );
     } finally {
       setIsButtonDisabled(false);
     }
@@ -110,59 +102,51 @@ export default function Antecipacao() {
 
   if (loading) {
     return (
-      <View style={styles.load_container}>
-          <ActivityIndicator size="large" color="#b5b5b5" />
+      <View style={styles.loadContainer}>
+        <ActivityIndicator size="large" color="#b5b5b5" />
       </View>
-  )
+    );
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.box}>
-        <WhiteBox width={width * 0.9} height={height * 0.11}>
-          <Text style={styles.textBox}>Saldo sendo antecipado: </Text>
-          <Divider />
-          <Text style={styles.text}>R$ {calculateResult().toFixed(2)}</Text>
-        </WhiteBox>
-      </View>
+      <WhiteBox width={width * 0.9} height={height * 0.11}>
+        <Text style={styles.textBox}>Saldo sendo antecipado:</Text>
+        <Divider />
+        <Text style={styles.text}>R$ {calculateResult().toFixed(2)}</Text>
+      </WhiteBox>
 
-      <View style={styles.box}>
-        <WhiteBox width={width * 0.9} height={height * 0.4}>
-          <Text style={styles.textBox}>{incompleteTasks.length} antecipações disponíveis </Text>
-          <Divider style={styles.divider} />
-          <ScrollView>
-            {incompleteTasks.map((task, index) => (
-              <View key={task.id}>
-                <View style={styles.option}>
-                  <Checkbox
-                    style={styles.checkbox}
-                    value={checkboxStates[index]}
-                    onValueChange={() => handleCheckboxChange(index)}
-                    color={checkboxStates[index] ? 'green' : undefined}
-                  />
-                  <Text style={styles.textMargin}>
-                    {task.name}
-                  </Text>
-                </View>
-                <Divider />
+      <WhiteBox width={width * 0.9} height={height * 0.4}>
+        <Text style={styles.textBox}>{incompleteTasks.length} antecipações disponíveis</Text>
+        <Divider style={styles.divider} />
+        <ScrollView>
+          {incompleteTasks.map((task, index) => (
+            <View key={task.id}>
+              <View style={styles.option}>
+                <Checkbox
+                  style={styles.checkbox}
+                  value={checkboxStates[index]}
+                  onValueChange={() => handleCheckboxChange(index)}
+                  color={checkboxStates[index] ? 'green' : undefined}
+                />
+                <Text style={styles.textMargin}>{task.name}</Text>
               </View>
-            ))}
-          </ScrollView>
-        </WhiteBox>
-      </View>
+              <Divider />
+            </View>
+          ))}
+        </ScrollView>
+      </WhiteBox>
 
-      <View style={styles.box}>
-        <WhiteBox width={width * 0.9} height={height * 0.11}>
-          <Text style={styles.textBox}>Valor a ser creditado na conta: </Text>
-          <Divider />
-          <Text style={styles.text}>R$ {(calculateResult() * 0.94).toFixed(2)}</Text>
-        </WhiteBox>
-      </View>
+      <WhiteBox width={width * 0.9} height={height * 0.11}>
+        <Text style={styles.textBox}>Valor a ser creditado na conta:</Text>
+        <Divider />
+        <Text style={styles.text}>R$ {(calculateResult() * 0.94).toFixed(2)}</Text>
+      </WhiteBox>
 
       <View style={styles.but}>
         <ButtonSolid
-          title={'Confirmar'}
-          useColor={'rgb(0, 0, 0)'}
+          title="Confirmar"
+          useColor="rgb(0, 0, 0)"
           onPress={handleButtonPress}
           disabled={isButtonDisabled}
           style={styles.button}
@@ -180,26 +164,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: width * 0.05,
   },
-
-  load_container: {
+  loadContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   option: {
     flexDirection: 'row',
     alignItems: 'center',
     width: width * 0.8,
     height: height * 0.055,
     flexWrap: 'wrap',
-  },
-  box: {
-    marginVertical: height * 0.02,
-  },
-  but: {
-    marginVertical: height * 0.01,
-    borderRadius: 1,
   },
   text: {
     fontSize: width * 0.08,
@@ -221,24 +196,20 @@ const styles = StyleSheet.create({
   checkbox: {
     marginTop: height * 0.035,
   },
-
+  but: {
+    marginVertical: height * 0.01,
+    borderRadius: 1,
+  },
   button: {
     borderRadius: 10,
     width: width * 0.8,
-
-    // Add these lines to add shading
-    shadowColor: "#000",
-    shadowOffset: {
-        width: 0,
-        height: 2,
-    },
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3.84,
     elevation: 5,
   },
-  
   buttonText: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
-
 });

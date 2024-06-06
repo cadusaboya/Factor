@@ -1,42 +1,79 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, Alert, Dimensions, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Alert, Dimensions, Text } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
-import { useNavigation, CommonActions } from '@react-navigation/native';
-import { useAuth } from '@/hooks/useAuth';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
 
 export default function ForgotPassword() {
-  const { setValue, handleSubmit } = useForm();
+  const { setValue, handleSubmit, setError, clearErrors, formState: { errors } } = useForm();
   const navigation = useNavigation();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-  const API_URL = 'http://factor-backend-1480867072.sa-east-1.elb.amazonaws.com:8000';
+  const API_URL = 'https://api.factorpa.xyz';
 
-  const handleForgot = async (data) => {
-    setIsButtonDisabled(true);
-  
+  const handleForgot = async (data) => {  
     try {
       const res = await axios.post(`${API_URL}/accounts/password_reset/`, data);
-      if (res.status === 200) {
-        Alert.alert('Success', 'Password reset email sent successfully');
-        // Navigate to a success page or display a message to the user
-      } else {
-        Alert.alert('Error', 'Failed to send password reset email');
-      }
+      console.log(res.data);
+      Alert.alert('E-mail enviado', 'Verifique sua caixa de spam ou de entrada para redefinir sua senha');
+      setIsButtonDisabled(false);
+      navigation.goBack();
     } catch (error) {
-      console.error('Error sending password reset request:', error);
-      Alert.alert('Error', 'Failed to send password reset request. Please try again later.');
+      if (error.response.status === 404) {
+        Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
+      } 
+      else if (error.response.status === 400) {
+        Alert.alert('Erro', 'Combinação de usuário e e-mail não encontrada');
+      }
+      else {
+        console.error('Error sending password reset request:', error);
+        Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
+      }
     } finally {
       setIsButtonDisabled(false);
     }
   };
 
   const onSubmit = (data) => {
-    handleForgot(data);
+    clearErrors();
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let hasErrors = false;
+
+    if (!data.username) {
+      setError('username', {
+        type: 'manual',
+        message: 'Este campo é obrigatório',
+      });
+      hasErrors = true;
+    }
+
+    if (!data.email) {
+      setError('email', {
+        type: 'manual',
+        message: 'Este campo é obrigatório',
+      });
+      hasErrors = true;
+    } else if (!emailRegex.test(data.email)) {
+      setError('email', {
+        type: 'manual',
+        message: 'E-mail inválido',
+      });
+      hasErrors = true;
+    }
+
+    // If all validations pass, proceed with user login
+    if (!hasErrors){
+      handleForgot(data);
+    } else {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente.');
+      setIsButtonDisabled(false);
+    }
   };
 
   const usernameRef = useRef();
@@ -47,24 +84,26 @@ export default function ForgotPassword() {
       <View style={styles.box}>
         <TextInput
           label="Usuário"
-          style={styles.input}
+          style={[styles.input, errors.username && styles.inputError]}
           onChangeText={(text) => setValue('username', text)}
           returnKeyType="next"
           onSubmitEditing={() => emailRef.current.focus()}
           blurOnSubmit={false}
           ref={usernameRef}
         />
+        {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
       </View>
 
       <View style={styles.box}>
         <TextInput
-            label="E-mail"
-            style={styles.input}
-            onChangeText={(text) => setValue('email', text)}
-            keyboardType="email-address"
-            returnKeyType="done"
-            ref={emailRef}
+          label="E-mail"
+          style={[styles.input, errors.email && styles.inputError]}
+          onChangeText={(text) => setValue('email', text)}
+          keyboardType="email-address"
+          returnKeyType="done"
+          ref={emailRef}
         />
+        {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
       </View>
 
       <View style={styles.buttonContainer}>
@@ -105,15 +144,21 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 10,
-
-      // Add these lines to add shading
-      shadowColor: "#000",
-      shadowOffset: {
-          width: 0,
-          height: 2,
-      },
-      shadowOpacity: 0.3,
-      shadowRadius: 3.84,
-      elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  inputError: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 4,
   },
 });
