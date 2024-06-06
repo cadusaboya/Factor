@@ -4,6 +4,7 @@ import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
 import { useNavigation, CommonActions } from '@react-navigation/native';
+import { Icon } from '@rneui/themed';
 import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
@@ -24,7 +25,7 @@ export default function ForgotPassword() {
       setIsButtonDisabled(false);
       navigation.goBack();
     } catch (error) {
-      if (error.response.status === 404) {
+      if (error.response.status === 502 || error.response.status === 504) {
         Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
       } 
       else if (error.response.status === 400) {

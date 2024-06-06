@@ -4,6 +4,7 @@ import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
+import SupportButton from '@/components/SupportButton';
 import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
@@ -22,7 +23,7 @@ export default function Register() {
       setIsButtonDisabled(false);
       navigation.goBack();
     } catch (error) {
-      if (error.response.status === 404) {
+      if (error.response.status === 502 || error.response.status === 504) {
         Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
       }
       else {
@@ -237,6 +238,7 @@ export default function Register() {
           />
         </View>
       </ScrollView>
+      <SupportButton />
     </KeyboardAvoidingView>
   );
 }

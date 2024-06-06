@@ -121,7 +121,7 @@ export default function Antecipacao() {
         ]
       );
     } catch (error) {
-        if (error.response.status === 404) {
+        if (error.response.status === 502 || error.response.status === 504) {
           console.error('Failed to confirm anticipation:', error);
           Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
         }
