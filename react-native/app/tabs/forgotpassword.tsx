@@ -1,21 +1,22 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, Alert, Dimensions, Text } from 'react-native';
+import { View, StyleSheet, Alert, Dimensions, Text, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
 
 export default function ForgotPassword() {
-  const { setValue, handleSubmit, setError, clearErrors, formState: { errors } } = useForm();
+  const { register, setValue, handleSubmit, setError, clearErrors, formState: { errors } } = useForm();
   const navigation = useNavigation();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const API_URL = 'https://api.factorpa.xyz';
 
   const handleForgot = async (data) => {  
+    
     try {
       const res = await axios.post(`${API_URL}/accounts/password_reset/`, data);
       console.log(res.data);
@@ -39,45 +40,53 @@ export default function ForgotPassword() {
   };
 
   const onSubmit = (data) => {
+    setIsButtonDisabled(true);
+
+    // Check if username is empty
+    const fieldsToCheck = ['username', 'email'];
     clearErrors();
+    let hasErrors = false;
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    let hasErrors = false;
-
-    if (!data.username) {
-      setError('username', {
-        type: 'manual',
-        message: 'Este campo é obrigatório',
-      });
-      hasErrors = true;
-    }
-
-    if (!data.email) {
-      setError('email', {
-        type: 'manual',
-        message: 'Este campo é obrigatório',
-      });
-      hasErrors = true;
-    } else if (!emailRegex.test(data.email)) {
+    if (!emailRegex.test(data.email)) {
       setError('email', {
         type: 'manual',
         message: 'E-mail inválido',
       });
       hasErrors = true;
     }
+    
+    // Loop through fields to check for emptiness and set errors
+    fieldsToCheck.forEach(field => {
+      if (!data[field]) {
+        setError(field, {
+          type: 'manual',
+          message: 'Este campo é obrigatório',
+        });
+        hasErrors = true;
+      }
+    });
 
     // If all validations pass, proceed with user login
     if (!hasErrors){
       handleForgot(data);
-    } else {
+    }
+    else {
       Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente.');
       setIsButtonDisabled(false);
+      return ;
     }
+    
   };
 
   const usernameRef = useRef();
   const emailRef = useRef();
+
+  React.useEffect(() => {
+    register('username');
+    register('email');
+  }, [register]);
 
   return (
     <View style={styles.container}>
@@ -96,12 +105,12 @@ export default function ForgotPassword() {
 
       <View style={styles.box}>
         <TextInput
-          label="E-mail"
-          style={[styles.input, errors.email && styles.inputError]}
-          onChangeText={(text) => setValue('email', text)}
-          keyboardType="email-address"
-          returnKeyType="done"
-          ref={emailRef}
+            label="E-mail"
+            style={[styles.input, errors.email && styles.inputError]}
+            onChangeText={(text) => setValue('email', text)}
+            keyboardType="email-address"
+            returnKeyType="done"
+            ref={emailRef}
         />
         {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
       </View>
@@ -144,19 +153,23 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 3.84,
-    elevation: 5,
+
+      // Add these lines to add shading
+      shadowColor: "#000",
+      shadowOffset: {
+          width: 0,
+          height: 2,
+      },
+      shadowOpacity: 0.3,
+      shadowRadius: 3.84,
+      elevation: 5,
   },
+
   inputError: {
     borderColor: 'red',
     borderWidth: 1,
   },
+
   errorText: {
     color: 'red',
     marginTop: 4,

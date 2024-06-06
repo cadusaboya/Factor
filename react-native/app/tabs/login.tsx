@@ -10,7 +10,7 @@ import axios from 'axios';
 const { width, height } = Dimensions.get('window');
 
 export default function Login() {
-  const { setValue, handleSubmit, setError, clearErrors, formState: { errors } } = useForm();
+  const { register, setValue, handleSubmit, setError, clearErrors, formState: { errors } } = useForm();
   const navigation = useNavigation();
   const { login } = useAuth();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -18,10 +18,12 @@ export default function Login() {
   const API_URL = 'https://api.factorpa.xyz';
 
   const handleLogin = async (data) => {
+
     try {
       const res = await axios.post(`${API_URL}/accounts/login/`, data);
       const token = res.data.token;
       await login(token);
+      setIsButtonDisabled(false);
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -31,20 +33,25 @@ export default function Login() {
     } catch (error) {
       if (error.response.status === 404) {
         Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
-      } else {
+      }
+      else {
         const msg = error.response.data.message;
         console.error('Error creating user:', msg);
         Alert.alert('Erro', `${msg}`);
       }
+
+      
     } finally {
       setIsButtonDisabled(false);
     }
   };
 
   const onSubmit = (data) => {
-    clearErrors();
+    setIsButtonDisabled(true);
 
+    // Check if username is empty
     const fieldsToCheck = ['username', 'password'];
+    clearErrors();
     let hasErrors = false;
 
     // Loop through fields to check for emptiness and set errors
@@ -59,18 +66,26 @@ export default function Login() {
     });
     
     // If all validations pass, proceed with user login
-    if (!hasErrors) {
+    if (!hasErrors){
       handleLogin(data);
-    } else {
+    }
+    else {
       Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente.');
       setIsButtonDisabled(false);
+      return ;
     }
+    
   };
 
   const handleForgotPassword = () => {
     // Navigate to the Forgot Password route
     navigation.navigate('Esqueci minha senha');
   };
+
+  React.useEffect(() => {
+    register('username');
+    register('password');
+  }, [register]);
 
   const usernameRef = useRef();
   const passwordRef = useRef();
@@ -149,22 +164,27 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 3.84,
-    elevation: 5,
+
+      // Add these lines to add shading
+      shadowColor: "#000",
+      shadowOffset: {
+          width: 0,
+          height: 2,
+      },
+      shadowOpacity: 0.3,
+      shadowRadius: 3.84,
+      elevation: 5,
   },
+  
   buttonText: {
     fontWeight: 'bold',
   },
+
   inputError: {
     borderColor: 'red',
     borderWidth: 1,
   },
+
   errorText: {
     color: 'red',
     marginTop: 4,

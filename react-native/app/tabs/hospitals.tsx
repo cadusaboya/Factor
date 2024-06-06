@@ -7,85 +7,96 @@ import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
+import axios from 'axios'; // Import Axios for making HTTP requests
 import HPDImage from '@/assets/images/PD.png';
 import CSTImage from '@/assets/images/HCST.png';
 import STImage from '@/assets/images/HST.png';
 import { useAuth } from '@/hooks/useAuth';
 
-SplashScreen.preventAutoHideAsync();
-
 export default function Hospitals() {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
   const API_URL = 'https://api.factorpa.xyz';
-  const { token } = useAuth();
+  const { token } = useAuth(); // Retrieve the token using the useAuth hook
 
   const [checkboxStates, setCheckboxStates] = useState({
-    1: false,
-    2: false,
-    3: false,
+    1: false, // checkbox1
+    2: false, // checkbox2
+    3: false, // checkbox3
   });
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   useEffect(() => {
-    const loadResourcesAndDataAsync = async () => {
-      try {
-        await Promise.all([
-          Asset.loadAsync([HPDImage, CSTImage, STImage]),
-        ]);
 
-        const response = await axios.get(`${API_URL}/accounts/user/hospitals/`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        const hospitalIds = response.data;
-        const newCheckboxStates = { ...checkboxStates };
-        hospitalIds.forEach(id => {
-          newCheckboxStates[id] = true;
-        });
-        setCheckboxStates(newCheckboxStates);
-      } catch (error) {
-        console.error('Error fetching user hospitals:', error);
-        Alert.alert('Erro', 'Ocorreu um erro ao processar as informações. Por favor, tente novamente mais tarde.');
-      } finally {
-        SplashScreen.hideAsync();
+      async function loadResourcesAndDataAsync() {
+          try {
+              // Preload images
+              await Promise.all([
+                  Asset.loadAsync([HPDImage, CSTImage, STImage]),
+              ]);
+          } catch (e) {
+              console.warn(e);
+          } finally {
+              SplashScreen.hideAsync();
+          }
       }
-    };
 
     loadResourcesAndDataAsync();
-  }, [token]);
+
+    // Fetch the hospitals the logged-in user works on
+    axios.get(`${API_URL}/accounts/user/hospitals/`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    })
+    .then(response => {
+      // Update the checkbox states based on the user's hospitals
+      const hospitalIds = response.data;
+      const newCheckboxStates = { ...checkboxStates };
+      hospitalIds.forEach(id => {
+        newCheckboxStates[id] = true;
+      });
+      setCheckboxStates(newCheckboxStates);
+    })
+    .catch(error => {
+      console.error('Error fetching user hospitals:', error);
+      Alert.alert('Erro', 'Ocorreu um erro ao processar as informações. Por favor, tente novamente mais tarde.');
+    });
+  }, []);
 
   const handleCheckboxChange = (key) => {
     setCheckboxStates(prevStates => ({
       ...prevStates,
-      [key]: !prevStates[key],
+      [key]: !prevStates[key], // Toggle the state of the checkbox at the specified key
     }));
   };
 
-  const handleButtonPress = async () => {
+  const handleButtonPress = () => {
+    // Disable the button to prevent multiple clicks
     setIsButtonDisabled(true);
 
+    // Get the hospitals selected by the user
     const selectedHospitals = Object.keys(checkboxStates).filter(key => checkboxStates[key]);
 
-    if (selectedHospitals.length === 0) {
+    // Check if at least one hospital is selected
+    if (!selectedHospitals) {
+      // Show an alert indicating that at least one hospital must be selected
       Alert.alert('Erro', 'Por favor, selecione ao menos um hospital');
-      setIsButtonDisabled(false);
-      return;
+      setIsButtonDisabled(false); // Re-enable the button
+      return; // Exit the function early
     }
 
-    try {
-      await axios.post(`${API_URL}/accounts/user/requests/`, {
-        hospitals: selectedHospitals,
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
+    // Send a POST request to create a user request
+    axios.post(`${API_URL}/accounts/user/requests/`, {
+      hospitals: selectedHospitals,
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    })
+    .then(response => {
+      // Show an alert indicating success
       Alert.alert(
         'Em análise',
         'Em breve seu saldo será atualizado',
@@ -94,28 +105,35 @@ export default function Hospitals() {
             text: 'OK',
             onPress: () => {
               setIsButtonDisabled(false);
-              navigation.goBack();
+              navigation.goBack(); // or navigation.navigate('Home') if 'Home' is the name of the main page
             },
           },
         ]
       );
-    } catch (error) {
-      console.error('Error creating request:', error);
+    })
+    .catch(error => {
+      const errors = error.response.data;
+      console.error('Error creating request:', errors);
 
-      if (error.response?.status === 404) {
+      if (error.response.status === 404) {  
+        // Show an alert indicating failure
         Alert.alert('Erro', 'Não foi possível conectar ao servidor. Por favor, tente novamente mais tarde.');
-      } else {
+      }
+      else {
         Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
+        console.error('Erro');
       }
 
-      setIsButtonDisabled(false);
-    }
+      setIsButtonDisabled(false); // Re-enable the button
+    });
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <Text style={[styles.head, { fontSize: width * 0.06 }]}>Hospitais credenciados</Text>
+      <ScrollView>
+        <View>
+          <Text style={[styles.head, { fontSize: width * 0.06 }]}>Hospitais credenciados</Text>
+        </View>
 
         <View style={styles.box}>
           <WhiteBox width={width * 0.9} height={height * 0.6}>
@@ -136,13 +154,14 @@ export default function Hospitals() {
           </WhiteBox>
         </View>
 
-        <View style={styles.buttonContainer}>
+        <View style={styles.but}>
           <ButtonSolid
-            title="Atualizar"
-            useColor="rgb(0, 0, 0)"
+            title={'Atualizar'}
+            useColor={'rgb(0, 0, 0)'}
             onPress={handleButtonPress}
-            disabled={isButtonDisabled}
+            disabled={isButtonDisabled}  // Disable the button based on state
             style={styles.button}
+            borderRadius={width * 0.1}
             textStyle={styles.buttonText}
           />
         </View>
@@ -157,49 +176,48 @@ const styles = StyleSheet.create({
     backgroundColor: '#E7E7E7',
     alignItems: 'center',
   },
-  scrollViewContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   image: {
     height: 60,
   },
   option: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row', // Align items horizontally
     height: 80,
   },
   box: {
     marginVertical: 20,
+  },
+  but: {
+    marginTop: 20,
+    borderRadius: 1,
   },
   head: {
     textAlign: 'center',
     marginTop: 50,
   },
   checkbox: {
+    marginVertical: 20,
     marginRight: 20,
   },
   divider: {
     height: 0.3,
     backgroundColor: 'black',
-    marginVertical: 10,
+    marginBottom: 20,
   },
-  buttonContainer: {
-    marginTop: 20,
-  },
+
   button: {
     borderRadius: 10,
+
+    // Add these lines to add shading
     shadowColor: "#000",
     shadowOffset: {
-      width: 0,
-      height: 2,
+        width: 0,
+        height: 2,
     },
     shadowOpacity: 0.3,
     shadowRadius: 3.84,
     elevation: 5,
   },
   buttonText: {
-    fontWeight: 'bold',
-  },
+    fontWeight: 'bold'
+},
 });
