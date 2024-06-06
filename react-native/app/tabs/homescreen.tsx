@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator, Dimensions, Linking } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { View, StyleSheet, TouchableOpacity, Text, Alert, ActivityIndicator, Dimensions, Linking } from 'react-native';
+import { useNavigation, useFocusEffect, CommonActions } from '@react-navigation/native';
 import { ThemedText } from '@/components/ThemedText';
 import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,7 +10,7 @@ const { width, height } = Dimensions.get('window');
 export default function HomeScreen() {
   const navigation = useNavigation();
   const API_URL = 'https://api.factorpa.xyz';
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
 
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +25,24 @@ export default function HomeScreen() {
       setUserData(response.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
+      logout();
+      Alert.alert('Servidor indisponível', 'Não foi possível carregar os dados, faça login novamente. Se o problema persistir, entre em contato com o suporte', 
+      [
+      {
+          text: 'OK',
+          onPress: () => {        
+              // Navigate back to the login page or any other desired page
+              navigation.dispatch(
+                  CommonActions.reset({
+                      index: 0,
+                      routes: [
+                      { name: 'Welcome' },
+                      ],
+                  })
+                  );
+          },
+      },
+      ]);
     } finally {
       setLoading(false);
     }

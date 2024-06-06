@@ -28,7 +28,26 @@ export default function Profile() {
         })
         .catch(error => {
             console.error('Error fetching user data:', error);
-            // Handle error, show alert, etc.
+            logout();
+            Alert.alert('Servidor indisponível', 'Não foi possível carregar os dados, faça login novamente. Se o problema persistir, entre em contato com o suporte', 
+            [
+            {
+                text: 'OK',
+                onPress: () => {
+                    setIsButtonDisabled(false);  // Re-enable the button
+                    
+                    // Navigate back to the login page or any other desired page
+                    navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [
+                            { name: 'Welcome' },
+                            ],
+                        })
+                        );
+                },
+            },
+            ]);
         });
     }, []);
   

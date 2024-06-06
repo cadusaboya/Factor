@@ -6,7 +6,7 @@ import { Text } from '@rneui/themed';
 import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import axios from 'axios'; // Import Axios for making HTTP requests
 import HPDImage from '@/assets/images/PD.png';
 import CSTImage from '@/assets/images/HCST.png';
@@ -17,7 +17,7 @@ export default function Hospitals() {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
   const API_URL = 'https://api.factorpa.xyz';
-  const { token } = useAuth(); // Retrieve the token using the useAuth hook
+  const { token, logout } = useAuth(); // Retrieve the token using the useAuth hook
 
   const [checkboxStates, setCheckboxStates] = useState({
     1: false, // checkbox1
@@ -61,7 +61,24 @@ export default function Hospitals() {
     })
     .catch(error => {
       console.error('Error fetching user hospitals:', error);
-      Alert.alert('Erro', 'Ocorreu um erro ao processar as informações. Por favor, tente novamente mais tarde.');
+      logout();
+      Alert.alert('Servidor indisponível', 'Não foi possível carregar os dados, faça login novamente. Se o problema persistir, entre em contato com o suporte', 
+      [
+      {
+          text: 'OK',
+          onPress: () => {        
+              // Navigate back to the login page or any other desired page
+              navigation.dispatch(
+                  CommonActions.reset({
+                      index: 0,
+                      routes: [
+                      { name: 'Welcome' },
+                      ],
+                  })
+                  );
+          },
+      },
+      ]);
     });
   }, []);
 
