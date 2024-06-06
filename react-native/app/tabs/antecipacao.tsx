@@ -4,7 +4,7 @@ import { Text, Divider } from '@rneui/themed';
 import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import axios from 'axios';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -13,7 +13,7 @@ const { width, height } = Dimensions.get('window');
 export default function Antecipacao() {
   const navigation = useNavigation();
   const API_URL = 'https://api.factorpa.xyz';
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
 
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +36,26 @@ export default function Antecipacao() {
       } catch (error) {
         console.error('Failed to fetch tasks:', error);
         setLoading(false);
+        logout();
+        Alert.alert('Servidor indisponível', 'Não foi possível carregar os dados, faça login novamente. Se o problema persistir, entre em contato com o suporte', 
+          [
+          {
+              text: 'OK',
+              onPress: () => {
+                  setIsButtonDisabled(false);  // Re-enable the button
+                  
+                  // Navigate back to the login page or any other desired page
+                  navigation.dispatch(
+                      CommonActions.reset({
+                        index: 0,
+                        routes: [
+                          { name: 'Welcome' },
+                        ],
+                      })
+                    );
+              },
+          },
+          ]);
       }
     };
 
