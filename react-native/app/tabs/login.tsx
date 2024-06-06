@@ -5,6 +5,7 @@ import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
+import SupportButton from '@/components/SupportButton';
 import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
@@ -31,7 +32,8 @@ export default function Login() {
         })
       );
     } catch (error) {
-      if (error.response.status === 404) {
+      console.error('Failed to fetch tasks:', error);
+      if (error.response.status === 502 || error.response.status === 504) {
         Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
       }
       else {
@@ -130,6 +132,8 @@ export default function Login() {
           textStyle={styles.buttonText}
         />
       </View>
+
+      <SupportButton />
     </View>
   );
 }

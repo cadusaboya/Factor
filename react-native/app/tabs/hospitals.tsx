@@ -133,7 +133,7 @@ export default function Hospitals() {
       const errors = error.response.data;
       console.error('Error creating request:', errors);
 
-      if (error.response.status === 404) {  
+      if (error.response.status === 502 || error.response.status === 504) {  
         // Show an alert indicating failure
         Alert.alert('Erro', 'Não foi possível conectar ao servidor. Por favor, tente novamente mais tarde.');
       }

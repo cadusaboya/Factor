@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions, Animated, Text, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Dimensions, Animated, Text, Image, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import { Asset } from 'expo-asset';
 import ph_1 from '@/assets/images/placeholder_1.png';
 import ph_2 from '@/assets/images/placeholder_2.png';
 import ph_3 from '@/assets/images/placeholder_3.png';
+import SupportButton from '@/components/SupportButton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -105,10 +106,11 @@ export default function Welcome() {
                         onPress={() => handleButtonPress('Entrar')}
                     >
                         <Text style={styles.buttonText}>Já sou usuário</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>               
                 </View>
             </View>
-        </View>
+            <SupportButton />
+          </View>
     );
 }
 
