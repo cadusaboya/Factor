@@ -78,9 +78,10 @@ export default function Hospitals() {
 
     // Get the hospitals selected by the user
     const selectedHospitals = Object.keys(checkboxStates).filter(key => checkboxStates[key]);
+    console.log(selectedHospitals)
 
     // Check if at least one hospital is selected
-    if (!selectedHospitals) {
+    if (selectedHospitals.length === 0) {
       // Show an alert indicating that at least one hospital must be selected
       Alert.alert('Erro', 'Por favor, selecione ao menos um hospital');
       setIsButtonDisabled(false); // Re-enable the button
