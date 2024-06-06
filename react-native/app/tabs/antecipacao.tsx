@@ -60,7 +60,7 @@ export default function Antecipacao() {
     };
 
     fetchTasks();
-  }, [API_URL, token]);
+  }, []);
 
   const handleCheckboxChange = (index) => {
     setCheckboxStates((prevStates) => {
