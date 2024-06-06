@@ -78,6 +78,15 @@ export default function Hospitals() {
 
     // Get the hospitals selected by the user
     const selectedHospitals = Object.keys(checkboxStates).filter(key => checkboxStates[key]);
+    console.log(selectedHospitals)
+
+    // Check if at least one hospital is selected
+    if (selectedHospitals.length === 0) {
+      // Show an alert indicating that at least one hospital must be selected
+      Alert.alert('Erro', 'Por favor, selecione ao menos um hospital');
+      setIsButtonDisabled(false); // Re-enable the button
+      return; // Exit the function early
+    }
 
     // Send a POST request to create a user request
     axios.post(`${API_URL}/accounts/user/requests/`, {
@@ -104,10 +113,19 @@ export default function Hospitals() {
       );
     })
     .catch(error => {
-      console.error('Error submitting user request:', error);
-      // Show an alert indicating failure
-      Alert.alert('Erro', 'Ocorreu um erro ao enviar a solicitação. Por favor, tente novamente mais tarde.');
-      setIsButtonDisabled(false);
+      const errors = error.response.data;
+      console.error('Error creating request:', errors);
+
+      if (error.response.status === 404) {  
+        // Show an alert indicating failure
+        Alert.alert('Erro', 'Não foi possível conectar ao servidor. Por favor, tente novamente mais tarde.');
+      }
+      else {
+        Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
+        console.error('Erro');
+      }
+
+      setIsButtonDisabled(false); // Re-enable the button
     });
   };
 

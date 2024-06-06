@@ -28,9 +28,6 @@ def login(request):
     username = request.data.get('username')
     password = request.data.get('password')
 
-    if not username or not password:
-        return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
-
     user = authenticate(request, username=username, password=password)
     if user is not None:
         refresh = RefreshToken.for_user(user)
@@ -40,10 +37,18 @@ def login(request):
         }
         return Response(response_data, status=status.HTTP_200_OK)
     else:
-        response_data = {
-            'message': 'Login unsuccessful',
-        }
-        return Response(response_data, status=status.HTTP_200_OK)
+        # Check if username exists in the database
+        if User.objects.filter(username=username).exists():
+            # Username exists, password is incorrect
+            response_data = {
+                'message': 'Senha incorreta',
+            }
+        else:
+            # Username doesn't exist
+            response_data = {
+                'message': 'Usuário não encontrado',
+            }
+        return Response(response_data, status=status.HTTP_401_UNAUTHORIZED)
     
 @api_view(['POST'])
 def register(request):
@@ -101,7 +106,7 @@ def password_reset(request):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = token_generator.make_token(user)
         # Send password reset email
-        reset_url = f'https://cadusaboya.github.io/Forgot-Password/?uidb64={uid}&token={token}' # Need to build this
+        reset_url = f'https://cadusaboya.github.io/Forgot-Password/?uidb64={uid}&token={token}'
         send_mail(
             'Password Reset Request',
             f'Click the following link to reset your password: {reset_url}',

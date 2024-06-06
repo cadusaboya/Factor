@@ -10,7 +10,7 @@ import axios from 'axios';
 const { width, height } = Dimensions.get('window');
 
 export default function Login() {
-  const { setValue, handleSubmit } = useForm();
+  const { register, setValue, handleSubmit, setError, clearErrors, formState: { errors } } = useForm();
   const navigation = useNavigation();
   const { login } = useAuth();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -18,39 +18,74 @@ export default function Login() {
   const API_URL = 'https://api.factorpa.xyz';
 
   const handleLogin = async (data) => {
-    setIsButtonDisabled(true);
 
     try {
       const res = await axios.post(`${API_URL}/accounts/login/`, data);
-      if (res.data.message === 'Login successful') {
-        const token = res.data.token;
-        await login(token);
-        setIsButtonDisabled(false);
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: 'Home' }],
-          })
-        );
-      } else {
-        Alert.alert('Erro', 'Dados incorretos');
-      }
+      const token = res.data.token;
+      await login(token);
+      setIsButtonDisabled(false);
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        })
+      );
     } catch (error) {
-      console.error('Error during login:', error);
-      Alert.alert('Erro', 'Houve um erro durante sua solicitação, tente novamente mais tarde');
+      if (error.response.status === 404) {
+        Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
+      }
+      else {
+        const msg = error.response.data.message;
+        console.error('Error creating user:', msg);
+        Alert.alert('Erro', `${msg}`);
+      }
+
+      
     } finally {
       setIsButtonDisabled(false);
     }
   };
 
   const onSubmit = (data) => {
-    handleLogin(data);
+    setIsButtonDisabled(true);
+
+    // Check if username is empty
+    const fieldsToCheck = ['username', 'password'];
+    clearErrors();
+    let hasErrors = false;
+
+    // Loop through fields to check for emptiness and set errors
+    fieldsToCheck.forEach(field => {
+      if (!data[field]) {
+        setError(field, {
+          type: 'manual',
+          message: 'Este campo é obrigatório',
+        });
+        hasErrors = true;
+      }
+    });
+    
+    // If all validations pass, proceed with user login
+    if (!hasErrors){
+      handleLogin(data);
+    }
+    else {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente.');
+      setIsButtonDisabled(false);
+      return ;
+    }
+    
   };
 
   const handleForgotPassword = () => {
     // Navigate to the Forgot Password route
     navigation.navigate('Esqueci minha senha');
   };
+
+  React.useEffect(() => {
+    register('username');
+    register('password');
+  }, [register]);
 
   const usernameRef = useRef();
   const passwordRef = useRef();
@@ -60,24 +95,26 @@ export default function Login() {
       <View style={styles.box}>
         <TextInput
           label="Usuário"
-          style={styles.input}
+          style={[styles.input, errors.username && styles.inputError]}
           onChangeText={(text) => setValue('username', text)}
           returnKeyType="next"
           onSubmitEditing={() => passwordRef.current.focus()}
           blurOnSubmit={false}
           ref={usernameRef}
         />
+        {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
       </View>
 
       <View style={styles.box}>
         <TextInput
           label="Senha"
-          style={styles.input}
+          style={[styles.input, errors.password && styles.inputError]}
           onChangeText={(text) => setValue('password', text)}
           secureTextEntry={true}
           returnKeyType="done"
           ref={passwordRef}
         />
+        {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
         <TouchableOpacity onPress={handleForgotPassword}>
           <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
         </TouchableOpacity>
@@ -141,5 +178,15 @@ const styles = StyleSheet.create({
   
   buttonText: {
     fontWeight: 'bold',
+  },
+
+  inputError: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
+
+  errorText: {
+    color: 'red',
+    marginTop: 4,
   },
 });

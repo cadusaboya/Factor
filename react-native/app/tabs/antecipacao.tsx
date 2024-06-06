@@ -101,8 +101,15 @@ export default function Antecipacao() {
         ]
       );
     } catch (error) {
-      console.error('Failed to confirm anticipation:', error);
-      Alert.alert('Erro', 'Não foi possível confirmar a antecipação. Por favor, tente novamente.');
+        if (error.response.status === 404) {
+          console.error('Failed to confirm anticipation:', error);
+          Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
+        }
+        else {
+          console.error('Failed to confirm anticipation:', error);
+          Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
+
+        }
     } finally {
       setIsButtonDisabled(false);
     }

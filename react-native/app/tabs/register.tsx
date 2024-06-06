@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Alert, KeyboardAvoidingView, ScrollView, Platform, Dimensions, Text } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
@@ -11,6 +11,7 @@ const { width, height } = Dimensions.get('window');
 export default function Register() {
   const { register, setValue, handleSubmit, setError, clearErrors, formState: { errors } } = useForm();
   const navigation = useNavigation();
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const API_URL = 'https://api.factorpa.xyz';
 
@@ -18,24 +19,92 @@ export default function Register() {
     try {
       const res = await axios.post(`${API_URL}/accounts/register/`, data);
       console.log(res.data);
+      setIsButtonDisabled(false);
       navigation.goBack();
     } catch (error) {
-      console.error('Error creating user:', error);
-      Alert.alert('Erro', 'Não foi possível criar a sua conta. Por favor, tente novamente.');
+      if (error.response.status === 404) {
+        Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
+      }
+      else {
+        const errors = error.response.data.errors;
+        console.error('Error creating user:', errors);
+        if (errors.username) {
+          Alert.alert('Erro', 'Usuário já existe');
+        }
+        else if (errors.cpf) {
+          Alert.alert('Erro', 'CPF já cadastrado');
+        }
+        else if (errors.email) {
+          Alert.alert('Erro', 'E-mail já cadastrado');
+        }
+        else {
+          Alert.alert('Erro', 'Certifique-se que todos os campos foram preenchidos corretamente.');
+        }
+      }
+      setIsButtonDisabled(false);
     }
   };
 
   const onSubmit = (data) => {
+    setIsButtonDisabled(true);
+    const fieldsToCheck = ['username', 'password', 'repeat_password', 'fullname', 'cpf', 'telefone', 'email'];
+
+    clearErrors();
+    let hasErrors = false;
+  
+    // Check if password and repeat_password match
     if (data.password !== data.repeat_password) {
       setError('repeat_password', {
         type: 'manual',
-        message: 'Passwords do not match',
+        message: 'As senhas não coincidem',
       });
-      Alert.alert('Erro', 'As senhas não coincidem. Por favor, tente novamente.');
+
+      hasErrors = true;
+    }
+
+  
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+      setError('email', {
+        type: 'manual',
+        message: 'E-mail inválido',
+      });
+
+      hasErrors = true;
+    }
+
+    // Validate CPF format (numeric with 11 digits)
+    const cpfRegex = /^\d{11}$/;
+    if (!cpfRegex.test(data.cpf)) {
+      setError('cpf', {
+        type: 'manual',
+        message: 'CPF inválido',
+      });
+
+      hasErrors = true;
+    }
+    
+    // Loop through fields to check for emptiness and set errors
+    fieldsToCheck.forEach(field => {
+      if (!data[field]) {
+        setError(field, {
+          type: 'manual',
+          message: 'Este campo é obrigatório',
+        });
+        hasErrors = true;
+      }
+    });
+  
+    // If all validations pass, proceed with user creation
+    if (!hasErrors){
+      handleCreateUser(data);
+    }
+    else {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente.');
+      setIsButtonDisabled(false);
       return;
     }
-    clearErrors('repeat_password');
-    handleCreateUser(data);
   };
 
   React.useEffect(() => {
@@ -164,6 +233,7 @@ export default function Register() {
             onPress={handleSubmit(onSubmit)}
             style={styles.button}
             textStyle={styles.buttonText}
+            disabled={isButtonDisabled}
           />
         </View>
       </ScrollView>
