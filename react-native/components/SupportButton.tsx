@@ -1,24 +1,9 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions, Linking } from 'react-native';
 import { Icon } from '@rneui/themed';
+import { sendWhatsapp } from '@/services/sendWhatsapp';
 
 const { width, height } = Dimensions.get('window');
-
-const sendWhatsapp = () => {
-  // Phone number in international format
-  const phoneNumber = '+5591984147769';
-
-  // Message you want to send
-  const message = 'Olá, estou com um problema referente ao aplicativo Factor. Você pode me ajudar?    ';
-
-  // Construct the WhatsApp URL
-  const whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
-
-  // Open the WhatsApp app
-  Linking.openURL(whatsappUrl)
-    .then(() => console.log('WhatsApp opened'))
-    .catch((error) => console.error('Error opening WhatsApp:', error));
-};
 
 const SupportButton = () => {
   return (

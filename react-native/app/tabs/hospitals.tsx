@@ -7,16 +7,15 @@ import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useNavigation, CommonActions } from '@react-navigation/native';
-import axios from 'axios'; // Import Axios for making HTTP requests
 import HPDImage from '@/assets/images/PD.png';
 import CSTImage from '@/assets/images/HCST.png';
 import STImage from '@/assets/images/HST.png';
 import { useAuth } from '@/hooks/useAuth';
+import { fetchUserHospitals, createUserRequest } from '@/services/api/apiHospitals';
 
 export default function Hospitals() {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
-  const API_URL = 'https://api.factorpa.xyz';
   const { token, logout } = useAuth(); // Retrieve the token using the useAuth hook
 
   const [checkboxStates, setCheckboxStates] = useState({
@@ -29,57 +28,35 @@ export default function Hospitals() {
 
   useEffect(() => {
 
-      async function loadResourcesAndDataAsync() {
-          try {
-              // Preload images
-              await Promise.all([
-                  Asset.loadAsync([HPDImage, CSTImage, STImage]),
-              ]);
-          } catch (e) {
-              console.warn(e);
-          } finally {
-              SplashScreen.hideAsync();
-          }
+    async function loadResourcesAndDataAsync() {
+      try {
+        // Preload images
+        await Promise.all([
+          Asset.loadAsync([HPDImage, CSTImage, STImage]),
+        ]);
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        SplashScreen.hideAsync();
       }
+    }
 
     loadResourcesAndDataAsync();
 
-    // Fetch the hospitals the logged-in user works on
-    axios.get(`${API_URL}/accounts/user/hospitals/`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-    })
-    .then(response => {
-      // Update the checkbox states based on the user's hospitals
-      const hospitalIds = response.data;
-      const newCheckboxStates = { ...checkboxStates };
-      hospitalIds.forEach(id => {
-        newCheckboxStates[id] = true;
-      });
-      setCheckboxStates(newCheckboxStates);
-    })
-    .catch(error => {
-      console.error('Error fetching user hospitals:', error);
-      logout();
-      Alert.alert('Servidor indisponível', 'Não foi possível carregar os dados, faça login novamente. Se o problema persistir, entre em contato com o suporte', 
-      [
-      {
-          text: 'OK',
-          onPress: () => {        
-              // Navigate back to the login page or any other desired page
-              navigation.dispatch(
-                  CommonActions.reset({
-                      index: 0,
-                      routes: [
-                      { name: 'Welcome' },
-                      ],
-                  })
-                  );
-          },
-      },
-      ]);
-    });
+    const fetchHospitals = async () => {
+      try {
+        const hospitalIds = await fetchUserHospitals(token, logout, navigation);
+        const newCheckboxStates = { ...checkboxStates };
+        hospitalIds.forEach(id => {
+          newCheckboxStates[id] = true;
+        });
+        setCheckboxStates(newCheckboxStates);
+      } catch (error) {
+        console.error('Error fetching user hospitals:', error);
+      }
+    };
+
+    fetchHospitals();
   }, []);
 
   const handleCheckboxChange = (key) => {
@@ -89,7 +66,7 @@ export default function Hospitals() {
     }));
   };
 
-  const handleButtonPress = () => {
+  const handleButtonPress = async () => {
     // Disable the button to prevent multiple clicks
     setIsButtonDisabled(true);
 
@@ -105,15 +82,8 @@ export default function Hospitals() {
       return; // Exit the function early
     }
 
-    // Send a POST request to create a user request
-    axios.post(`${API_URL}/accounts/user/requests/`, {
-      hospitals: selectedHospitals,
-    }, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    })
-    .then(response => {
+    try {
+      await createUserRequest(token, selectedHospitals);
       // Show an alert indicating success
       Alert.alert(
         'Em análise',
@@ -128,22 +98,20 @@ export default function Hospitals() {
           },
         ]
       );
-    })
-    .catch(error => {
+    } catch (error) {
       const errors = error.response.data;
       console.error('Error creating request:', errors);
 
-      if (error.response.status === 502 || error.response.status === 504) {  
+      if (error.response.status === 502 || error.response.status === 504) {
         // Show an alert indicating failure
         Alert.alert('Erro', 'Não foi possível conectar ao servidor. Por favor, tente novamente mais tarde.');
-      }
-      else {
+      } else {
         Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
         console.error('Erro');
       }
 
       setIsButtonDisabled(false); // Re-enable the button
-    });
+    }
   };
 
   return (
@@ -221,10 +189,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     marginBottom: 20,
   },
-
   button: {
     borderRadius: 10,
-
     // Add these lines to add shading
     shadowColor: "#000",
     shadowOffset: {
@@ -237,5 +203,5 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: 'bold'
-},
+  },
 });

@@ -1,55 +1,31 @@
+// screens/History.tsx
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Alert, Text, useWindowDimensions, ActivityIndicator } from 'react-native';
 import WhiteBox from '@/components/whiteBox';
-import axios from 'axios';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
+import { fetchTransactions } from '@/services/api/apiHistory';
 
 export default function History() {
   const navigation = useNavigation();
   const [transactions, setTransactions] = useState([]);
-  const API_URL = 'https://api.factorpa.xyz';
   const { token, logout } = useAuth(); // Retrieve the token using the useAuth hook
   const { width, height } = useWindowDimensions(); // Get the window width
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const getTransactions = async () => {
       try {
         // Fetch transactions from the backend
-        const response = await axios.get(`${API_URL}/tasks/user/transactions/`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        setTransactions(response.data);
+        const data = await fetchTransactions(token, logout, navigation);
+        setTransactions(data);
         setLoading(false);
       } catch (error) {
-        console.error('Failed to fetch transactions:', error);
         setLoading(false);
-        logout();
-        Alert.alert('Servidor indisponível', 'Não foi possível carregar os dados, faça login novamente. Se o problema persistir, entre em contato com o suporte', 
-        [
-        {
-            text: 'OK',
-            onPress: () => {        
-                // Navigate back to the login page or any other desired page
-                navigation.dispatch(
-                    CommonActions.reset({
-                        index: 0,
-                        routes: [
-                        { name: 'Welcome' },
-                        ],
-                    })
-                    );
-            },
-        },
-        ]);
       }
     };
 
-    fetchTransactions();
+    getTransactions();
   }, []);
 
   if (loading) {
@@ -57,7 +33,7 @@ export default function History() {
       <View style={styles.load_container}>
           <ActivityIndicator size="large" color="#b5b5b5" />
       </View>
-  )
+    );
   }
 
   return (
