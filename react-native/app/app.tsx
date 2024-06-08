@@ -4,9 +4,7 @@ import AppNavigator from './AppNavigator';
 import { registerRootComponent } from 'expo';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '@/context/AuthContext';
-import {
-  CopilotProvider,
-} from "react-native-copilot";
+import { CopilotProvider } from "react-native-copilot";
 
 export default function App() {
   return (

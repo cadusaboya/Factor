@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Alert, Image, ActivityIndicator, useWindowDimensions } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
-import { Asset } from 'expo-asset';
 import { Text } from '@rneui/themed';
 import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import { useNavigation, CommonActions } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchUserHospitals, createUserRequest } from '@/services/api/apiHospitals';
-import { useCheckboxStates } from '@/services/useCheckboxStates';
+import { useCheckboxStates } from '@/hooks/useCheckboxStates';
 import  preloadImages  from '@/services/preloadImages';
 
 const images = [

@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Image, Animated, Dimensions } from 'react-native';
-import useWelcomeAnimation from '@/services/welcomeAnimation';
+import useWelcomeAnimation from '@/hooks/useWelcomeAnimation';
 import SupportButton from '@/components/SupportButton';
-import navigate from '@/services/navigateButton';
+import navigate from '@/services/navigate';
 
 const { width, height } = Dimensions.get('window');
 

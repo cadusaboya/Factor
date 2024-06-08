@@ -3,7 +3,7 @@ import { View, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, Dimension
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import SupportButton from '@/components/SupportButton';
-import useRegisterLogic from '@/services/useRegisterLogic';
+import useRegisterLogic from '@/hooks/useRegisterLogic';
 
 const { width, height } = Dimensions.get('window');
 

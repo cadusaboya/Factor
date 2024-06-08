@@ -1,8 +1,8 @@
 // screens/History.tsx
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert, Text, useWindowDimensions, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, useWindowDimensions, ActivityIndicator } from 'react-native';
 import WhiteBox from '@/components/whiteBox';
-import { useNavigation, CommonActions } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchTransactions } from '@/services/api/apiHistory';
 

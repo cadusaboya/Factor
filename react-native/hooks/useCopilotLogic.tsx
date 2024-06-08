@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { View } from 'react-native';
-import {
-    useCopilot,
-} from "react-native-copilot";
+import { useCopilot } from "react-native-copilot";
 
 export const useCopilotLogic = () => {
     const [lastEvent, setLastEvent] = useState<string | null>(null);

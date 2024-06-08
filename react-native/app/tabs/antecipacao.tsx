@@ -1,14 +1,14 @@
 // Antecipacao.tsx
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert, ActivityIndicator, Dimensions } from 'react-native';
+import { View, StyleSheet, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
 import { Text, Divider } from '@rneui/themed';
 import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import { useNavigation, CommonActions } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchTasks, confirmTasks } from '@/services/api/apiAntecipacao';
-import { useCheckboxStates } from '@/services/useCheckboxStates';
+import { useCheckboxStates } from '@/hooks/useCheckboxStates';
 
 
 const { width, height } = Dimensions.get('window');

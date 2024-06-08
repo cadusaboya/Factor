@@ -3,8 +3,8 @@ import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-nati
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import SupportButton from '@/components/SupportButton';
-import useLoginLogic from '@/services/useLoginLogic';
-import navigate from '@/services/navigateButton';
+import useLoginLogic from '@/hooks/useLoginLogic';
+import navigate from '@/services/navigate';
 
 const { width, height } = Dimensions.get('window');
 

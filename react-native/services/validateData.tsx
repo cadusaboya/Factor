@@ -1,5 +1,3 @@
-import { setError } from 'react-hook-form';
-
 export function validateEmail(email: string, setError: Function): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const isValid = emailRegex.test(email);

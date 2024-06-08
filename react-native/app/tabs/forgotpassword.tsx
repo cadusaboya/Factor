@@ -1,10 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, Alert, Dimensions, Text } from 'react-native';
+import { View, StyleSheet, Dimensions, Text } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import { useForm } from 'react-hook-form';
-import { useNavigation } from '@react-navigation/native';
-import useForgotPasswordLogic from '@/services/useForgotPasswordLogic';
+import useForgotPasswordLogic from '@/hooks/useForgotPasswordLogic';
 
 const { width, height } = Dimensions.get('window');
 

@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Animated } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import { Asset } from 'expo-asset';
-import preloadImages from './preloadImages';
+import preloadImages from '../services/preloadImages';
 
 const useWelcomeAnimation = () => {
   const [textIndex, setTextIndex] = useState(0);
