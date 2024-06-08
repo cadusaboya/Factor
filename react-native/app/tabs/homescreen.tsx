@@ -8,6 +8,7 @@ import { useCopilotLogic } from '@/hooks/useCopilotLogic';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchUserData } from '@/services/api/apiHomescreen';
+import { handleServerError } from '@/services/handleServerError';
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,13 +21,17 @@ export default function HomeScreen() {
   const { handleNavigate } = navigate();
   const { CustomCopilotView, StartCopilot } = useCopilotLogic();
 
+  // Fetch user cash from the backend
   useFocusEffect(
     React.useCallback(() => {
       const getUserData = async () => {
         try {
-          const data = await fetchUserData(token, logout, navigation);
+          const data = await fetchUserData(token);
           setUserData(data);
         } 
+        catch(error) {
+          handleServerError(logout, navigation); // Call handleServerError directly
+        }
         finally {
           setLoading(false);
         }

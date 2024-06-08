@@ -1,10 +1,12 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions, Linking } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { sendWhatsapp } from '@/services/sendWhatsapp';
 
 const { width, height } = Dimensions.get('window');
 
+
+// Support button to open support chat on Whatsapp
 const SupportButton = () => {
   return (
       <View style={styles.supPosition}>
@@ -22,10 +24,10 @@ const SupportButton = () => {
 const styles = StyleSheet.create({
     supPosition: {
       position: 'absolute',
-      bottom: height * 0.25, // 1.5% of screen height
-      right: width * 0.055 , // Adjust right margin to 2% of screen width
-      width: width * 0.06, // 11% of screen width
-      height: height * 0.035, // 3.5% of screen height
+      bottom: height * 0.25,
+      right: width * 0.055,
+      width: width * 0.06,
+      height: height * 0.035,
   },
 });
 

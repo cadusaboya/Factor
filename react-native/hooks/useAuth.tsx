@@ -1,6 +1,7 @@
 import { useContext } from 'react';
-import { AuthContext } from '@/context/AuthContext'; // Adjust the path as per your project structure
+import { AuthContext } from '@/context/AuthContext';
 
+// Check if user is Logged in
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

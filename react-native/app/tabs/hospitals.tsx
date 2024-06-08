@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { fetchUserHospitals, createUserRequest } from '@/services/api/apiHospitals';
 import { useCheckboxStates } from '@/hooks/useCheckboxStates';
 import  preloadImages  from '@/services/preloadImages';
+import { handleServerError } from '@/services/handleServerError';
 
 const images = [
   require('@/assets/images/PD.png'),
@@ -24,21 +25,25 @@ export default function Hospitals() {
   const [loading, setLoading] = useState(true); 
   const { checkboxStates, toggleCheckbox } = useCheckboxStates([]);
 
+
   useEffect(() => {
+    // Preload images
     preloadImages(images);
 
+    // Fetch the hospitals user already work on
     const fetchHospitals = async () => {
-      const hospitalIds = await fetchUserHospitals(token, logout, navigation);
-      hospitalIds.forEach(id => {
-        toggleCheckbox(id);
-      });
-      setLoading(false);
+      try {
+        const hospitalIds = await fetchUserHospitals(token);
+        hospitalIds.forEach(id => { toggleCheckbox(id); });
+      } catch (error) {
+        handleServerError(logout, navigation);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchHospitals();
   }, []);
-
-  
 
   const handleButtonPress = async () => {
     setIsButtonDisabled(true);

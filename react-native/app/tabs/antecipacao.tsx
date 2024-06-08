@@ -1,4 +1,3 @@
-// Antecipacao.tsx
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
 import { Text, Divider } from '@rneui/themed';
@@ -9,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchTasks, confirmTasks } from '@/services/api/apiAntecipacao';
 import { useCheckboxStates } from '@/hooks/useCheckboxStates';
+import { handleServerError } from '@/services/handleServerError';
 
 
 const { width, height } = Dimensions.get('window');
@@ -30,23 +30,31 @@ export default function Antecipacao() {
 
   const incompleteTasks = tasks.filter(task => !task.is_completed);
 
+
+  // Fetch tasks from the backend
   useEffect(() => {
     const fetchData = async () => {
-      const fetchedTasks = await fetchTasks(navigation, token, logout);
-      setTasks(fetchedTasks);
-      setIsButtonDisabled(false);
-      setLoading(false);
+      try {
+        const fetchedTasks = await fetchTasks(token);
+        setTasks(fetchedTasks);
+        setIsButtonDisabled(false);
+        setLoading(false);
+      } catch(error) {
+        handleServerError(logout, navigation);
+      }
     };
   
     fetchData();
   }, []);
 
+  // Calculate the total value of the selected tasks
   const calculateResult = (): number => {
     return incompleteTasks.reduce((total, task, index) => {
       return checkboxStates[index] ? total + parseFloat(task.value.toString()) : total;
     }, 0);
   };
 
+  // Confirm the selected tasks
   const handleButtonPress = async () => {
     setIsButtonDisabled(true);
     await confirmTasks(incompleteTasks, checkboxStates, token, navigation);

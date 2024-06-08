@@ -7,6 +7,7 @@ const useWelcomeAnimation = () => {
   const [textIndex, setTextIndex] = useState(0);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
+  // Load texts, subtexts and images from each screen
   const texts = [
     'Receba imediatamente',
     'Tudo ao seu alcance',
@@ -28,6 +29,7 @@ const useWelcomeAnimation = () => {
   useEffect(() => {
     SplashScreen.preventAutoHideAsync();
 
+    // Pre load images
     async function loadResourcesAndDataAsync() {
       await preloadImages(images);
     }
@@ -35,6 +37,7 @@ const useWelcomeAnimation = () => {
     loadResourcesAndDataAsync();
     SplashScreen.hideAsync();
 
+    // Animation to run each one for 5 seconds, where the 1st second is fading in and the last one is fading out
     const initialDelay = setTimeout(() => {
       Animated.timing(fadeAnim, {
         toValue: 0,

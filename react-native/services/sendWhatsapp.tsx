@@ -1,5 +1,6 @@
 import { Linking } from 'react-native';
 
+// Function to send a WhatsApp message to a specific phone number
 export const sendWhatsapp = () => {
     const phoneNumber = '+5591984147769';
     const message = 'Olá, estou com um problema referente ao aplicativo Factor. Você pode me ajudar?';

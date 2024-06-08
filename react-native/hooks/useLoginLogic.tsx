@@ -16,9 +16,9 @@ const useLoginLogic = () => {
 
   const handleLogin = async (data: { username: string; password: string }) => {
     try {
-      setIsButtonDisabled(true); // Set the button to disabled when login starts
-      const token = await loginUser(data);
-      await login(token);
+      setIsButtonDisabled(true);
+      const token = await loginUser(data); // Try logging in
+      await login(token); // Save token on Auth
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -31,21 +31,24 @@ const useLoginLogic = () => {
   };
 
   const onSubmit = (data: { username: string; password: string }) => {
-    setIsButtonDisabled(true); // Set the button to disabled when form is submitted
+    setIsButtonDisabled(true);
     clearErrors();
     let hasErrors = false;
 
     // Check for errors
     hasErrors = checkEmptyFields(data, setError);
 
+    // If no errors, try to login
     if (!hasErrors) {
       handleLogin(data);
     } else {
       Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente.');
-      setIsButtonDisabled(false); // Set the button back to enabled if form validation fails
+      setIsButtonDisabled(false);
     }
   };
 
+
+  // Save fields for RHF
   useEffect(() => {
     register('username');
     register('password');

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+
+// Custom hook to manage the state of multiple checkboxes
 export const useCheckboxStates = (initialStates) => {
   const [checkboxStates, setCheckboxStates] = useState(initialStates);
 

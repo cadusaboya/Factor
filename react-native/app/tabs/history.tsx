@@ -5,20 +5,24 @@ import WhiteBox from '@/components/whiteBox';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchTransactions } from '@/services/api/apiHistory';
+import { handleServerError } from '@/services/handleServerError';
 
 export default function History() {
   const navigation = useNavigation();
   const [transactions, setTransactions] = useState([]);
-  const { token, logout } = useAuth(); // Retrieve the token using the useAuth hook
-  const { width, height } = useWindowDimensions(); // Get the window width
+  const { token, logout } = useAuth();
+  const { width, height } = useWindowDimensions();
   const [loading, setLoading] = useState(true);
 
+
+  // Fetch transactions from the backend
   useEffect(() => {
     const getTransactions = async () => {
       try {
-        // Fetch transactions from the backend
-        const data = await fetchTransactions(token, logout, navigation);
+        const data = await fetchTransactions(token);
         setTransactions(data);
+      } catch(error) {
+        handleServerError(logout, navigation);
       } finally {
         setLoading(false);
       }

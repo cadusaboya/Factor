@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { Alert } from 'react-native';
-import { CommonActions } from '@react-navigation/native';
 import { API_URL } from '@/constants/apiUrl';
 
-export const fetchUserData = async (token: string, logout: () => void, navigation: any) => {
+// API Call to get user cash
+export const fetchUserData = async (token: string) => {
   try {
     const response = await axios.get(`${API_URL}/accounts/user/cash/`, {
       headers: {
@@ -13,24 +12,6 @@ export const fetchUserData = async (token: string, logout: () => void, navigatio
     return response.data;
   } catch (error: any) {
     console.error('Error fetching user data:', error);
-    logout();
-    Alert.alert(
-      'Servidor indisponível', 
-      'Não foi possível carregar os dados, faça login novamente. Se o problema persistir, entre em contato com o suporte',
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'Welcome' }],
-              })
-            );
-          },
-        },
-      ]
-    );
     throw error;
   }
 };

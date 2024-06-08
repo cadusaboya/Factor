@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { Alert } from 'react-native';
-import { CommonActions } from '@react-navigation/native';
 import { API_URL } from '@/constants/apiUrl';
 
 interface Task {
@@ -10,10 +9,9 @@ interface Task {
   is_completed: boolean;
 }
 
+// API Call to get user tasks
 export const fetchTasks = async (
-  navigation: any,
   token: string,
-  logout: () => void
 ): Promise<Task[]> => {
 
 
@@ -26,30 +24,12 @@ export const fetchTasks = async (
     return response.data;
   } catch (error) {
     console.error('Failed to fetch tasks:', error);
-    logout();
-    Alert.alert(
-      'Servidor indisponível',
-      'Não foi possível carregar os dados, faça login novamente. Se o problema persistir, entre em contato com o suporte',
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-
-            // Navigate back to the login page or any other desired page
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'Welcome' }]
-              })
-            );
-          }
-        }
-      ]
-    );
-    return [];
+    throw error;
   }
 };
 
+
+// API Call to confirm tasks
 export const confirmTasks = async (
   incompleteTasks: Task[],
   checkboxStates: boolean[],
@@ -57,20 +37,27 @@ export const confirmTasks = async (
   navigation: any
 ) => {
   try {
-    const tasksToComplete = incompleteTasks.filter((task, index) => checkboxStates[index]);
+    // Get the tasks that user checked
+    const tasksToComplete = incompleteTasks.filter((task, index) => checkboxStates[index]); 
+    
+    // Check if at least one task was selected
     if (!tasksToComplete.length) {
       Alert.alert('Erro', 'Por favor, selecione ao menos um pedido de antecipação');
       return;
     }
 
+    // Get the ids of the tasks to be completed
     const taskIds = tasksToComplete.map(task => task.id);
 
+
+    // Set the selected tasks to completed
     await axios.post(`${API_URL}/tasks/update/`, { tasks: taskIds }, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
 
+    // Create a user transaction for each selected task 
     await Promise.all(
       tasksToComplete.map(async task => {
         await axios.post(
@@ -99,10 +86,11 @@ export const confirmTasks = async (
       }
     ]);
   } catch (error: any) {
-    if (error.response?.status === 502 || error.response?.status === 504) {
+    // Server Unavailable
+    if (error.response?.status === 502 || error.response?.status === 504 || error.response.status === 404) {
       console.error('Failed to confirm anticipation:', error);
       Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
-    } else {
+    } else { // Unexpected Error
       console.error('Failed to confirm anticipation:', error);
       Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
     }

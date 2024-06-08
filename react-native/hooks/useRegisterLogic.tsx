@@ -51,6 +51,7 @@ const useRegisterLogic = () => {
     }
   };
 
+  // Save fields for RHF
   useEffect(() => {
     register('username');
     register('password');

@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { Alert } from 'react-native';
-import { CommonActions } from '@react-navigation/native';
 import { API_URL } from '@/constants/apiUrl';
 
-export const fetchUserHospitals = async (token: string, logout: () => void, navigation: any) => {
+
+// API Call to get user hospitals
+export const fetchUserHospitals = async (token: string) => {
   try {
     const response = await axios.get(`${API_URL}/accounts/user/hospitals/`, {
       headers: {
@@ -13,39 +14,22 @@ export const fetchUserHospitals = async (token: string, logout: () => void, navi
     return response.data;
   } catch (error) {
     console.error('Error fetching user hospitals:', error);
-    logout();
-    Alert.alert(
-      'Servidor indisponível',
-      'Não foi possível carregar os dados, faça login novamente. Se o problema persistir, entre em contato com o suporte',
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'Welcome' }],
-              })
-            );
-          },
-        },
-      ]
-    );
     throw error;
   }
 };
 
+// API Call to send new User Request
 export const createUserRequest = async (token: string, selectedHospitals: string[], navigation: any) => {
   try {
       await axios.post(`${API_URL}/accounts/user/requests/`, {
-      hospitals: selectedHospitals,
+      hospitals: selectedHospitals, // Send the ID o the selected Hospitals
     }, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     });
 
-    Alert.alert(
+    Alert.alert( // Show success message and redirect to home page
       'Em análise',
       'Em breve seu saldo será atualizado',
       [
@@ -60,10 +44,9 @@ export const createUserRequest = async (token: string, selectedHospitals: string
       const errors = error.response.data;
         console.error('Error creating request:', errors);
 
-        if (error.response.status === 502 || error.response.status === 504) {
-          // Show an alert indicating failure
+        if (error.response.status === 502 || error.response.status === 504 || error.response.status === 404) { // Server unavailable
           Alert.alert('Erro', 'Não foi possível conectar ao servidor. Por favor, tente novamente mais tarde.');
-        } else {
+        } else { // Unexpected error
           Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
           console.error('Erro');
         }

@@ -42,6 +42,7 @@ const useForgotPasswordLogic = () => {
     }
   };
 
+  // Save the variables on RHF
   useEffect(() => {
     register('username');
     register('email');

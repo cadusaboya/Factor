@@ -5,8 +5,9 @@ import { Avatar } from '@rneui/themed';
 import { Cell, Separator, TableView } from 'react-native-tableview-simple';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import { fetchUserProfile, handleProfileError } from '@/services/api/apiProfile';
+import { fetchUserProfile } from '@/services/api/apiProfile';
 import { useAuth } from '@/hooks/useAuth';
+import { handleServerError } from '@/services/handleServerError';
 
 const { width } = Dimensions.get('window');
 
@@ -16,12 +17,21 @@ export default function Profile() {
   const { token, logout } = useAuth();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
+  // Fetch user profile from the backend
   useEffect(() => {
-    fetchUserProfile(token)
-      .then(data => setUserData(data))
-      .catch(error => handleProfileError(error, logout, navigation, setIsButtonDisabled));
+    const getUserProfile = async () => {
+      try {
+        const fetchedUserProfile = await fetchUserProfile(token);
+        setUserData(fetchedUserProfile);
+      } catch(error) {
+        handleServerError(logout, navigation);
+      }
+    };
+  
+    getUserProfile();
   }, []);
 
+  // Logout user
   const handleLogout = () => {
     setIsButtonDisabled(true);
     logout();
@@ -34,12 +44,8 @@ export default function Profile() {
             CommonActions.reset({
               index: 0,
               routes: [{ name: 'Welcome' }],
-            })
-          );
-        },
-      },
-    ]);
-  };
+            }));},},]);
+      };
 
   if (!userData) {
     return (
