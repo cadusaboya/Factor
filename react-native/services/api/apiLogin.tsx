@@ -1,8 +1,6 @@
-// services/authService.ts
 import axios from 'axios';
 import { Alert } from 'react-native';
-
-const API_URL = 'https://factor-cadusaboya.loca.lt';
+import { API_URL } from '@/constants/apiUrl';
 
 interface LoginData {
   username: string;

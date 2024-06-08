@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { Alert } from 'react-native';
-
-const API_URL = 'https://factor-cadusaboya.loca.lt';
+import { API_URL } from '@/constants/apiUrl';
 
 export const createUser = async (data) => {
   try {

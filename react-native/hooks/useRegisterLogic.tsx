@@ -1,4 +1,3 @@
-// useRegisterLogic.tsx
 import { useState, useEffect, useRef } from 'react';
 import { Alert } from 'react-native';
 import { useForm } from 'react-hook-form';

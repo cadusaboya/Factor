@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { Alert } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
-
-const API_URL = 'https://factor-cadusaboya.loca.lt';
+import { API_URL } from '@/constants/apiUrl';
 
 export const fetchTransactions = async (token: string, logout: () => void, navigation: any) => {
   try {

@@ -1,7 +1,7 @@
-// apiService.ts
 import axios from 'axios';
 import { Alert } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
+import { API_URL } from '@/constants/apiUrl';
 
 interface Task {
   id: number;
@@ -9,8 +9,6 @@ interface Task {
   value: number;
   is_completed: boolean;
 }
-
-const API_URL = 'https://factor-cadusaboya.loca.lt';
 
 export const fetchTasks = async (
   navigation: any,

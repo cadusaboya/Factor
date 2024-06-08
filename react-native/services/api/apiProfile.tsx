@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { Alert } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
-import { useAuth } from '@/hooks/useAuth';
-
-const API_URL = 'https://factor-cadusaboya.loca.lt';
+import { API_URL } from '@/constants/apiUrl';
 
 export const fetchUserProfile = async (token: string) => {
   try {
