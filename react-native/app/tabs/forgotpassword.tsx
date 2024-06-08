@@ -1,69 +1,23 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet, Alert, Dimensions, Text } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useForm } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
-import { sendPasswordResetRequest } from '@/services/api/apiForgotPassword';
+import useForgotPasswordLogic from '@/services/useForgotPasswordLogic';
 
 const { width, height } = Dimensions.get('window');
 
 export default function ForgotPassword() {
-  const { register, setValue, handleSubmit, setError, clearErrors, formState: { errors } } = useForm();
-  const navigation = useNavigation();
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-  const onSubmit = async (data) => {
-    setIsButtonDisabled(true);
-
-    // Check if username is empty
-    const fieldsToCheck = ['username', 'email'];
-    clearErrors();
-    let hasErrors = false;
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-      setError('email', {
-        type: 'manual',
-        message: 'E-mail inválido',
-      });
-      hasErrors = true;
-    }
-    
-    // Loop through fields to check for emptiness and set errors
-    fieldsToCheck.forEach(field => {
-      if (!data[field]) {
-        setError(field, {
-          type: 'manual',
-          message: 'Este campo é obrigatório',
-        });
-        hasErrors = true;
-      }
-    });
-
-    // If all validations pass, proceed with user login
-    if (!hasErrors) {
-      try {
-        await sendPasswordResetRequest(data);
-        Alert.alert('E-mail enviado', 'Verifique sua caixa de spam ou de entrada para redefinir sua senha');
-        navigation.goBack();
-      } catch (error) {
-        setIsButtonDisabled(false);
-      }
-    } else {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente.');
-      setIsButtonDisabled(false);
-    }
-  };
-
-  const usernameRef = useRef();
-  const emailRef = useRef();
-
-  useEffect(() => {
-    register('username');
-    register('email');
-  }, [register]);
+  const { 
+    onSubmit, 
+    isButtonDisabled, 
+    setValue, 
+    usernameRef, 
+    emailRef, 
+    errors, 
+    handleSubmit 
+  } = useForgotPasswordLogic();
 
   return (
     <View style={styles.container}>

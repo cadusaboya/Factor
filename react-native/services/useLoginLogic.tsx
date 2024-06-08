@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import { loginUser } from '@/services/api/apiLogin';
+import { checkEmptyFields } from '@/services/validateData';
 
 const useLoginLogic = () => {
   const { register, setValue, handleSubmit: handleFormSubmit, setError, clearErrors, formState: { errors } } = useForm();
@@ -32,18 +33,10 @@ const useLoginLogic = () => {
   const onSubmit = (data: { username: string; password: string }) => {
     setIsButtonDisabled(true); // Set the button to disabled when form is submitted
     clearErrors();
-    const fieldsToCheck = ['username', 'password'];
     let hasErrors = false;
 
-    fieldsToCheck.forEach(field => {
-      if (!data[field]) {
-        setError(field, {
-          type: 'manual',
-          message: 'Este campo é obrigatório',
-        });
-        hasErrors = true;
-      }
-    });
+    // Check for errors
+    hasErrors = checkEmptyFields(data, setError);
 
     if (!hasErrors) {
       handleLogin(data);

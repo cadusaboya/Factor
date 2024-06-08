@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Animated } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { Asset } from 'expo-asset';
+import preloadImages from './preloadImages';
 
 const useWelcomeAnimation = () => {
   const [textIndex, setTextIndex] = useState(0);
@@ -29,16 +30,11 @@ const useWelcomeAnimation = () => {
     SplashScreen.preventAutoHideAsync();
 
     async function loadResourcesAndDataAsync() {
-      try {
-        await Asset.loadAsync([images[0], images[1], images[2]]);
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        SplashScreen.hideAsync();
-      }
+      await preloadImages(images);
     }
 
     loadResourcesAndDataAsync();
+    SplashScreen.hideAsync();
 
     const initialDelay = setTimeout(() => {
       Animated.timing(fadeAnim, {

@@ -37,17 +37,37 @@ export const fetchUserHospitals = async (token: string, logout: () => void, navi
   }
 };
 
-export const createUserRequest = async (token: string, selectedHospitals: string[]) => {
+export const createUserRequest = async (token: string, selectedHospitals: string[], navigation: any) => {
   try {
-    const response = await axios.post(`${API_URL}/accounts/user/requests/`, {
+      await axios.post(`${API_URL}/accounts/user/requests/`, {
       hospitals: selectedHospitals,
     }, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return response.data;
+
+    Alert.alert(
+      'Em análise',
+      'Em breve seu saldo será atualizado',
+      [
+        {
+          text: 'OK',
+          onPress: () => {navigation.goBack();},
+        },
+      ]
+    );
+
   } catch (error) {
-    throw error;
+      const errors = error.response.data;
+        console.error('Error creating request:', errors);
+
+        if (error.response.status === 502 || error.response.status === 504) {
+          // Show an alert indicating failure
+          Alert.alert('Erro', 'Não foi possível conectar ao servidor. Por favor, tente novamente mais tarde.');
+        } else {
+          Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
+          console.error('Erro');
+        }
   }
 };

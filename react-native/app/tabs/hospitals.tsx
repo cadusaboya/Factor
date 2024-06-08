@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert, Image, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, Image, ActivityIndicator, useWindowDimensions } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { Asset } from 'expo-asset';
 import { Text } from '@rneui/themed';
@@ -7,112 +7,69 @@ import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { useNavigation, CommonActions } from '@react-navigation/native';
-import HPDImage from '@/assets/images/PD.png';
-import CSTImage from '@/assets/images/HCST.png';
-import STImage from '@/assets/images/HST.png';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchUserHospitals, createUserRequest } from '@/services/api/apiHospitals';
+import { useCheckboxStates } from '@/services/useCheckboxStates';
+import  preloadImages  from '@/services/preloadImages';
+
+const images = [
+  require('@/assets/images/PD.png'),
+  require('@/assets/images/HCST.png'),
+  require('@/assets/images/HST.png')
+];
 
 export default function Hospitals() {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
   const { token, logout } = useAuth(); // Retrieve the token using the useAuth hook
-
-  const [checkboxStates, setCheckboxStates] = useState({
-    1: false, // checkbox1
-    2: false, // checkbox2
-    3: false, // checkbox3
-  });
-
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(true); 
+  const { checkboxStates, toggleCheckbox } = useCheckboxStates([]);
 
   useEffect(() => {
-
-    async function loadResourcesAndDataAsync() {
-      try {
-        // Preload images
-        await Promise.all([
-          Asset.loadAsync([HPDImage, CSTImage, STImage]),
-        ]);
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        SplashScreen.hideAsync();
-      }
-    }
-
-    loadResourcesAndDataAsync();
+    preloadImages(images);
 
     const fetchHospitals = async () => {
-      try {
-        const hospitalIds = await fetchUserHospitals(token, logout, navigation);
-        const newCheckboxStates = { ...checkboxStates };
-        hospitalIds.forEach(id => {
-          newCheckboxStates[id] = true;
-        });
-        setCheckboxStates(newCheckboxStates);
-      } catch (error) {
-        console.error('Error fetching user hospitals:', error);
-      }
+      const hospitalIds = await fetchUserHospitals(token, logout, navigation);
+      hospitalIds.forEach(id => {
+        toggleCheckbox(id);
+      });
+      setLoading(false);
     };
 
     fetchHospitals();
   }, []);
 
-  const handleCheckboxChange = (key) => {
-    setCheckboxStates(prevStates => ({
-      ...prevStates,
-      [key]: !prevStates[key], // Toggle the state of the checkbox at the specified key
-    }));
-  };
+  
 
   const handleButtonPress = async () => {
-    // Disable the button to prevent multiple clicks
     setIsButtonDisabled(true);
 
     // Get the hospitals selected by the user
-    const selectedHospitals = Object.keys(checkboxStates).filter(key => checkboxStates[key]);
-    console.log(selectedHospitals)
+    const selectedHospitals = Object.keys(checkboxStates).filter(id => checkboxStates[id]);
 
     // Check if at least one hospital is selected
     if (selectedHospitals.length === 0) {
-      // Show an alert indicating that at least one hospital must be selected
       Alert.alert('Erro', 'Por favor, selecione ao menos um hospital');
-      setIsButtonDisabled(false); // Re-enable the button
-      return; // Exit the function early
+      setIsButtonDisabled(false);
+      return;
     }
 
+    // Create user request
     try {
-      await createUserRequest(token, selectedHospitals);
-      // Show an alert indicating success
-      Alert.alert(
-        'Em análise',
-        'Em breve seu saldo será atualizado',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              setIsButtonDisabled(false);
-              navigation.goBack(); // or navigation.navigate('Home') if 'Home' is the name of the main page
-            },
-          },
-        ]
-      );
-    } catch (error) {
-      const errors = error.response.data;
-      console.error('Error creating request:', errors);
-
-      if (error.response.status === 502 || error.response.status === 504) {
-        // Show an alert indicating failure
-        Alert.alert('Erro', 'Não foi possível conectar ao servidor. Por favor, tente novamente mais tarde.');
-      } else {
-        Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
-        console.error('Erro');
-      }
-
-      setIsButtonDisabled(false); // Re-enable the button
+      await createUserRequest(token, selectedHospitals, navigation);
+    } finally {
+      setIsButtonDisabled(false);
     }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.load_container}>
+        <ActivityIndicator size="large" color="#b5b5b5" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -123,14 +80,14 @@ export default function Hospitals() {
 
         <View style={styles.box}>
           <WhiteBox width={width * 0.9} height={height * 0.6}>
-            {[{ key: 2, image: HPDImage }, { key: 1, image: CSTImage }, { key: 3, image: STImage }].map(({ key, image }) => (
-              <React.Fragment key={key}>
+            {[{ id: 1, image: images[1] }, { id: 2, image: images[0] }, { id: 3, image: images[2] }].map(({ id, image }) => (
+              <React.Fragment key={id}>
                 <View style={[styles.option, { width: width * 0.8 }]}>
                   <Checkbox
                     style={styles.checkbox}
-                    value={checkboxStates[key]}
-                    onValueChange={() => handleCheckboxChange(key)}
-                    color={checkboxStates[key] ? 'green' : undefined}
+                    value={checkboxStates[id]}
+                    onValueChange={() => toggleCheckbox(id)}
+                    color={checkboxStates[id] ? 'green' : undefined}
                   />
                   <Image source={image} style={[styles.image, { width: width * 0.5 }]} resizeMode="contain" />
                 </View>
@@ -203,5 +160,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: 'bold'
+  },
+  load_container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

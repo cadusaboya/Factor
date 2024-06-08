@@ -19,8 +19,7 @@ export default function History() {
         // Fetch transactions from the backend
         const data = await fetchTransactions(token, logout, navigation);
         setTransactions(data);
-        setLoading(false);
-      } catch (error) {
+      } finally {
         setLoading(false);
       }
     };
