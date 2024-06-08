@@ -7,8 +7,9 @@ const Header = () => {
     const navigation = useNavigation();
     const route = useRoute();
 
+    // Function to navigate to the "Home" screen
     const navigateToHome = () => {
-        navigation.goBack(''); // Navigate to the "Home" screen
+        navigation.goBack('');
     };
 
     // Conditionally render the "home" button only if the current screen is not the initialRouteName
@@ -19,6 +20,7 @@ const Header = () => {
         return <BlankComponent width={61.3} height={0} />;
     };
 
+    // Conditionally render the "profile" button only if the current screen is not the "Registro" or "Welcome" screen
     const renderProfileButton = () => {
         if (route.name !== 'Registro' && route.name !== 'Welcome' && route.name !== 'Entrar' && route.name !== 'Profile') {
             return <Appbar.Action icon="account" onPress={() => navigation.navigate('Profile')} />

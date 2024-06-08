@@ -1,146 +1,72 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert, ActivityIndicator, Dimensions } from 'react-native';
+import { View, StyleSheet, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
 import { Text, Divider } from '@rneui/themed';
 import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import { useNavigation, CommonActions } from '@react-navigation/native';
-import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
+import { fetchTasks, confirmTasks } from '@/services/api/apiAntecipacao';
+import { useCheckboxStates } from '@/hooks/useCheckboxStates';
+import { handleServerError } from '@/services/handleServerError';
+
 
 const { width, height } = Dimensions.get('window');
 
+interface Task {
+  id: number;
+  name: string;
+  value: number;
+  is_completed: boolean;
+}
+
 export default function Antecipacao() {
   const navigation = useNavigation();
-  const API_URL = 'https://api.factorpa.xyz';
   const { token, logout } = useAuth();
-
-  const [tasks, setTasks] = useState([]);
+  const { checkboxStates, toggleCheckbox } = useCheckboxStates([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [checkboxStates, setCheckboxStates] = useState([]);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const incompleteTasks = tasks.filter(task => !task.is_completed);
 
+
+  // Fetch tasks from the backend
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/tasks/`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        setTasks(response.data);
-        setCheckboxStates(new Array(response.data.length).fill(false));
+        const fetchedTasks = await fetchTasks(token);
+        setTasks(fetchedTasks);
+        setIsButtonDisabled(false);
         setLoading(false);
-      } catch (error) {
-        console.error('Failed to fetch tasks:', error);
-        setLoading(false);
-        logout();
-        Alert.alert('Servidor indisponível', 'Não foi possível carregar os dados, faça login novamente. Se o problema persistir, entre em contato com o suporte', 
-          [
-          {
-              text: 'OK',
-              onPress: () => {
-                  setIsButtonDisabled(false);  // Re-enable the button
-                  
-                  // Navigate back to the login page or any other desired page
-                  navigation.dispatch(
-                      CommonActions.reset({
-                        index: 0,
-                        routes: [
-                          { name: 'Welcome' },
-                        ],
-                      })
-                    );
-              },
-          },
-          ]);
+      } catch(error) {
+        handleServerError(logout, navigation);
       }
     };
-
-    fetchTasks();
+  
+    fetchData();
   }, []);
 
-  const handleCheckboxChange = (index) => {
-    setCheckboxStates((prevStates) => {
-      const newStates = [...prevStates];
-      newStates[index] = !newStates[index]; // Toggle the state of the checkbox at the specified index
-      return newStates;
-    });
-  };
-
-  const calculateResult = () => {
+  // Calculate the total value of the selected tasks
+  const calculateResult = (): number => {
     return incompleteTasks.reduce((total, task, index) => {
-      return checkboxStates[index] ? total + parseFloat(task.value) : total;
+      return checkboxStates[index] ? total + parseFloat(task.value.toString()) : total;
     }, 0);
   };
 
+  // Confirm the selected tasks
   const handleButtonPress = async () => {
     setIsButtonDisabled(true);
-
-    try {
-      const tasksToComplete = incompleteTasks.filter((task, index) => checkboxStates[index]);
-      if (!tasksToComplete.length) {
-        Alert.alert('Erro', 'Por favor, selecione ao menos um pedido de antecipação');
-        setIsButtonDisabled(false);
-        return;
-      }
-      
-      const taskIds = tasksToComplete.map(task => task.id);;
-
-      await axios.post(`${API_URL}/tasks/update/`, { tasks: taskIds }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      await Promise.all(tasksToComplete.map(async (task) => {
-        await axios.post(`${API_URL}/tasks/user/transactions/`, {
-          task: task.id,
-          date: new Date().toISOString().split('T')[0],
-          antecipado: task.value,
-          recebido: (task.value * 0.94).toFixed(2)
-        }, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-      }));
-
-      Alert.alert(
-        'Sucesso',
-        'Em breve o dinheiro será enviado para sua conta',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              navigation.navigate("Home");
-            },
-          },
-        ]
-      );
-    } catch (error) {
-        if (error.response.status === 502 || error.response.status === 504) {
-          console.error('Failed to confirm anticipation:', error);
-          Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
-        }
-        else {
-          console.error('Failed to confirm anticipation:', error);
-          Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
-
-        }
-    } finally {
-      setIsButtonDisabled(false);
-    }
+    await confirmTasks(incompleteTasks, checkboxStates, token, navigation);
+    setIsButtonDisabled(false);
   };
 
   if (loading) {
     return (
       <View style={styles.load_container}>
-          <ActivityIndicator size="large" color="#b5b5b5" />
+        <ActivityIndicator size="large" color="#b5b5b5" />
       </View>
-  )
+    );
   }
 
   return (
@@ -164,12 +90,10 @@ export default function Antecipacao() {
                   <Checkbox
                     style={styles.checkbox}
                     value={checkboxStates[index]}
-                    onValueChange={() => handleCheckboxChange(index)}
+                    onValueChange={() => toggleCheckbox(index)}
                     color={checkboxStates[index] ? 'green' : undefined}
                   />
-                  <Text style={styles.textMargin}>
-                    {task.name}
-                  </Text>
+                  <Text style={styles.textMargin}>{task.name}</Text>
                 </View>
                 <Divider />
               </View>
@@ -207,13 +131,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: width * 0.05,
   },
-
   load_container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   option: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -248,24 +170,21 @@ const styles = StyleSheet.create({
   checkbox: {
     marginTop: height * 0.035,
   },
-
   button: {
     borderRadius: 10,
     width: width * 0.8,
-
     // Add these lines to add shading
     shadowColor: "#000",
     shadowOffset: {
-        width: 0,
-        height: 2,
+      width: 0,
+      height: 2,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
   },
-  
   buttonText: {
-    fontWeight: 'bold'
+    color: 'white',
+    fontSize: width * 0.05,
   },
-
 });

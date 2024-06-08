@@ -1,130 +1,27 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Alert, KeyboardAvoidingView, ScrollView, Platform, Dimensions, Text } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, Dimensions, Text } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import { useForm } from 'react-hook-form';
-import { useNavigation } from '@react-navigation/native';
 import SupportButton from '@/components/SupportButton';
-import axios from 'axios';
+import useRegisterLogic from '@/hooks/useRegisterLogic';
 
 const { width, height } = Dimensions.get('window');
 
-export default function Register() {
-  const { register, setValue, handleSubmit, setError, clearErrors, formState: { errors } } = useForm();
-  const navigation = useNavigation();
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-  const API_URL = 'https://api.factorpa.xyz';
-
-  const handleCreateUser = async (data) => {
-    try {
-      const res = await axios.post(`${API_URL}/accounts/register/`, data);
-      console.log(res.data);
-      setIsButtonDisabled(false);
-      navigation.goBack();
-    } catch (error) {
-      if (error.response.status === 502 || error.response.status === 504) {
-        Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
-      }
-      else {
-        const errors = error.response.data.errors;
-        console.error('Error creating user:', errors);
-        if (errors.username) {
-          Alert.alert('Erro', 'Usuário já existe');
-        }
-        else if (errors.cpf) {
-          Alert.alert('Erro', 'CPF já cadastrado');
-        }
-        else if (errors.email) {
-          Alert.alert('Erro', 'E-mail já cadastrado');
-        }
-        else {
-          Alert.alert('Erro', 'Certifique-se que todos os campos foram preenchidos corretamente.');
-        }
-      }
-      setIsButtonDisabled(false);
-    }
-  };
-
-  const onSubmit = (data) => {
-    setIsButtonDisabled(true);
-    const fieldsToCheck = ['username', 'password', 'repeat_password', 'fullname', 'cpf', 'telefone', 'email'];
-
-    clearErrors();
-    let hasErrors = false;
-  
-    // Check if password and repeat_password match
-    if (data.password !== data.repeat_password) {
-      setError('repeat_password', {
-        type: 'manual',
-        message: 'As senhas não coincidem',
-      });
-
-      hasErrors = true;
-    }
-
-  
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-      setError('email', {
-        type: 'manual',
-        message: 'E-mail inválido',
-      });
-
-      hasErrors = true;
-    }
-
-    // Validate CPF format (numeric with 11 digits)
-    const cpfRegex = /^\d{11}$/;
-    if (!cpfRegex.test(data.cpf)) {
-      setError('cpf', {
-        type: 'manual',
-        message: 'CPF inválido',
-      });
-
-      hasErrors = true;
-    }
-    
-    // Loop through fields to check for emptiness and set errors
-    fieldsToCheck.forEach(field => {
-      if (!data[field]) {
-        setError(field, {
-          type: 'manual',
-          message: 'Este campo é obrigatório',
-        });
-        hasErrors = true;
-      }
-    });
-  
-    // If all validations pass, proceed with user creation
-    if (!hasErrors){
-      handleCreateUser(data);
-    }
-    else {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente.');
-      setIsButtonDisabled(false);
-      return;
-    }
-  };
-
-  React.useEffect(() => {
-    register('username');
-    register('password');
-    register('repeat_password');
-    register('fullname');
-    register('cpf');
-    register('telefone');
-    register('email');
-  }, [register]);
-
-  const usernameRef = React.useRef();
-  const passwordRef = React.useRef();
-  const fullnameRef = React.useRef();
-  const cpfRef = React.useRef();
-  const telefoneRef = React.useRef();
-  const emailRef = React.useRef();
-  const repeatpasswordRef = React.useRef();
+const Register = () => {
+  const { 
+    onSubmit, 
+    isButtonDisabled, 
+    setValue, 
+    usernameRef, 
+    passwordRef, 
+    repeatPasswordRef, 
+    fullnameRef, 
+    cpfRef, 
+    telefoneRef, 
+    emailRef, 
+    errors, 
+    handleSubmit 
+  } = useRegisterLogic();
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -154,7 +51,7 @@ export default function Register() {
             secureTextEntry={true}
             textContentType="oneTimeCode"
             returnKeyType="next"
-            onSubmitEditing={() => repeatpasswordRef.current.focus()}
+            onSubmitEditing={() => repeatPasswordRef.current.focus()}
             blurOnSubmit={false}
             ref={passwordRef}
           />
@@ -171,7 +68,7 @@ export default function Register() {
             returnKeyType="next"
             onSubmitEditing={() => fullnameRef.current.focus()}
             blurOnSubmit={false}
-            ref={repeatpasswordRef}
+            ref={repeatPasswordRef}
           />
           {errors.repeat_password && <Text style={styles.errorText}>{errors.repeat_password.message}</Text>}
         </View>
@@ -297,3 +194,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default Register;

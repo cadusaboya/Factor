@@ -1,93 +1,21 @@
-import React, { useState, useRef } from 'react';
-import { View, StyleSheet, Alert, Dimensions, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, Dimensions, Text } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import { useForm } from 'react-hook-form';
-import { useNavigation, CommonActions } from '@react-navigation/native';
-import { Icon } from '@rneui/themed';
-import axios from 'axios';
+import useForgotPasswordLogic from '@/hooks/useForgotPasswordLogic';
 
 const { width, height } = Dimensions.get('window');
 
 export default function ForgotPassword() {
-  const { register, setValue, handleSubmit, setError, clearErrors, formState: { errors } } = useForm();
-  const navigation = useNavigation();
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-  const API_URL = 'https://api.factorpa.xyz';
-
-  const handleForgot = async (data) => {  
-    
-    try {
-      const res = await axios.post(`${API_URL}/accounts/password_reset/`, data);
-      console.log(res.data);
-      Alert.alert('E-mail enviado', 'Verifique sua caixa de spam ou de entrada para redefinir sua senha');
-      setIsButtonDisabled(false);
-      navigation.goBack();
-    } catch (error) {
-      if (error.response.status === 502 || error.response.status === 504) {
-        Alert.alert('Servidor indisponível', 'Por favor, tente novamente mais tarde.');
-      } 
-      else if (error.response.status === 400) {
-        Alert.alert('Erro', 'Combinação de usuário e e-mail não encontrada');
-      }
-      else {
-        console.error('Error sending password reset request:', error);
-        Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
-      }
-    } finally {
-      setIsButtonDisabled(false);
-    }
-  };
-
-  const onSubmit = (data) => {
-    setIsButtonDisabled(true);
-
-    // Check if username is empty
-    const fieldsToCheck = ['username', 'email'];
-    clearErrors();
-    let hasErrors = false;
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-      setError('email', {
-        type: 'manual',
-        message: 'E-mail inválido',
-      });
-      hasErrors = true;
-    }
-    
-    // Loop through fields to check for emptiness and set errors
-    fieldsToCheck.forEach(field => {
-      if (!data[field]) {
-        setError(field, {
-          type: 'manual',
-          message: 'Este campo é obrigatório',
-        });
-        hasErrors = true;
-      }
-    });
-
-    // If all validations pass, proceed with user login
-    if (!hasErrors){
-      handleForgot(data);
-    }
-    else {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente.');
-      setIsButtonDisabled(false);
-      return ;
-    }
-    
-  };
-
-  const usernameRef = useRef();
-  const emailRef = useRef();
-
-  React.useEffect(() => {
-    register('username');
-    register('email');
-  }, [register]);
+  const { 
+    onSubmit, 
+    isButtonDisabled, 
+    setValue, 
+    usernameRef, 
+    emailRef, 
+    errors, 
+    handleSubmit 
+  } = useForgotPasswordLogic();
 
   return (
     <View style={styles.container}>
@@ -106,12 +34,12 @@ export default function ForgotPassword() {
 
       <View style={styles.box}>
         <TextInput
-            label="E-mail"
-            style={[styles.input, errors.email && styles.inputError]}
-            onChangeText={(text) => setValue('email', text)}
-            keyboardType="email-address"
-            returnKeyType="done"
-            ref={emailRef}
+          label="E-mail"
+          style={[styles.input, errors.email && styles.inputError]}
+          onChangeText={(text) => setValue('email', text)}
+          keyboardType="email-address"
+          returnKeyType="done"
+          ref={emailRef}
         />
         {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
       </View>
@@ -154,23 +82,20 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 10,
-
-      // Add these lines to add shading
-      shadowColor: "#000",
-      shadowOffset: {
-          width: 0,
-          height: 2,
-      },
-      shadowOpacity: 0.3,
-      shadowRadius: 3.84,
-      elevation: 5,
+    // Add these lines to add shading
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-
   inputError: {
     borderColor: 'red',
     borderWidth: 1,
   },
-
   errorText: {
     color: 'red',
     marginTop: 4,

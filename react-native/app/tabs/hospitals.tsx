@@ -1,150 +1,78 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert, Image, useWindowDimensions } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
-import { Asset } from 'expo-asset';
+import { View, StyleSheet, ScrollView, Alert, Image, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { Text } from '@rneui/themed';
 import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import { useNavigation, CommonActions } from '@react-navigation/native';
-import axios from 'axios'; // Import Axios for making HTTP requests
-import HPDImage from '@/assets/images/PD.png';
-import CSTImage from '@/assets/images/HCST.png';
-import STImage from '@/assets/images/HST.png';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
+import { fetchUserHospitals, createUserRequest } from '@/services/api/apiHospitals';
+import { useCheckboxStates } from '@/hooks/useCheckboxStates';
+import  preloadImages  from '@/services/preloadImages';
+import { handleServerError } from '@/services/handleServerError';
+
+const images = [
+  require('@/assets/images/PD.png'),
+  require('@/assets/images/HCST.png'),
+  require('@/assets/images/HST.png')
+];
 
 export default function Hospitals() {
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
-  const API_URL = 'https://api.factorpa.xyz';
   const { token, logout } = useAuth(); // Retrieve the token using the useAuth hook
-
-  const [checkboxStates, setCheckboxStates] = useState({
-    1: false, // checkbox1
-    2: false, // checkbox2
-    3: false, // checkbox3
-  });
-
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(true); 
+  const { checkboxStates, toggleCheckbox } = useCheckboxStates([]);
+
 
   useEffect(() => {
+    // Preload images
+    preloadImages(images);
 
-      async function loadResourcesAndDataAsync() {
-          try {
-              // Preload images
-              await Promise.all([
-                  Asset.loadAsync([HPDImage, CSTImage, STImage]),
-              ]);
-          } catch (e) {
-              console.warn(e);
-          } finally {
-              SplashScreen.hideAsync();
-          }
+    // Fetch the hospitals user already work on
+    const fetchHospitals = async () => {
+      try {
+        const hospitalIds = await fetchUserHospitals(token);
+        hospitalIds.forEach(id => { toggleCheckbox(id); });
+      } catch (error) {
+        handleServerError(logout, navigation);
+      } finally {
+        setLoading(false);
       }
+    };
 
-    loadResourcesAndDataAsync();
-
-    // Fetch the hospitals the logged-in user works on
-    axios.get(`${API_URL}/accounts/user/hospitals/`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-    })
-    .then(response => {
-      // Update the checkbox states based on the user's hospitals
-      const hospitalIds = response.data;
-      const newCheckboxStates = { ...checkboxStates };
-      hospitalIds.forEach(id => {
-        newCheckboxStates[id] = true;
-      });
-      setCheckboxStates(newCheckboxStates);
-    })
-    .catch(error => {
-      console.error('Error fetching user hospitals:', error);
-      logout();
-      Alert.alert('Servidor indisponível', 'Não foi possível carregar os dados, faça login novamente. Se o problema persistir, entre em contato com o suporte', 
-      [
-      {
-          text: 'OK',
-          onPress: () => {        
-              // Navigate back to the login page or any other desired page
-              navigation.dispatch(
-                  CommonActions.reset({
-                      index: 0,
-                      routes: [
-                      { name: 'Welcome' },
-                      ],
-                  })
-                  );
-          },
-      },
-      ]);
-    });
+    fetchHospitals();
   }, []);
 
-  const handleCheckboxChange = (key) => {
-    setCheckboxStates(prevStates => ({
-      ...prevStates,
-      [key]: !prevStates[key], // Toggle the state of the checkbox at the specified key
-    }));
-  };
-
-  const handleButtonPress = () => {
-    // Disable the button to prevent multiple clicks
+  const handleButtonPress = async () => {
     setIsButtonDisabled(true);
 
     // Get the hospitals selected by the user
-    const selectedHospitals = Object.keys(checkboxStates).filter(key => checkboxStates[key]);
-    console.log(selectedHospitals)
+    const selectedHospitals = Object.keys(checkboxStates).filter(id => checkboxStates[id]);
 
     // Check if at least one hospital is selected
     if (selectedHospitals.length === 0) {
-      // Show an alert indicating that at least one hospital must be selected
       Alert.alert('Erro', 'Por favor, selecione ao menos um hospital');
-      setIsButtonDisabled(false); // Re-enable the button
-      return; // Exit the function early
+      setIsButtonDisabled(false);
+      return;
     }
 
-    // Send a POST request to create a user request
-    axios.post(`${API_URL}/accounts/user/requests/`, {
-      hospitals: selectedHospitals,
-    }, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    })
-    .then(response => {
-      // Show an alert indicating success
-      Alert.alert(
-        'Em análise',
-        'Em breve seu saldo será atualizado',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              setIsButtonDisabled(false);
-              navigation.goBack(); // or navigation.navigate('Home') if 'Home' is the name of the main page
-            },
-          },
-        ]
-      );
-    })
-    .catch(error => {
-      const errors = error.response.data;
-      console.error('Error creating request:', errors);
-
-      if (error.response.status === 502 || error.response.status === 504) {  
-        // Show an alert indicating failure
-        Alert.alert('Erro', 'Não foi possível conectar ao servidor. Por favor, tente novamente mais tarde.');
-      }
-      else {
-        Alert.alert('Erro inesperado', 'Se o problema persistir, entre em contato com o suporte');
-        console.error('Erro');
-      }
-
-      setIsButtonDisabled(false); // Re-enable the button
-    });
+    // Create user request
+    try {
+      await createUserRequest(token, selectedHospitals, navigation);
+    } finally {
+      setIsButtonDisabled(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.load_container}>
+        <ActivityIndicator size="large" color="#b5b5b5" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -155,14 +83,14 @@ export default function Hospitals() {
 
         <View style={styles.box}>
           <WhiteBox width={width * 0.9} height={height * 0.6}>
-            {[{ key: 2, image: HPDImage }, { key: 1, image: CSTImage }, { key: 3, image: STImage }].map(({ key, image }) => (
-              <React.Fragment key={key}>
+            {[{ id: 1, image: images[1] }, { id: 2, image: images[0] }, { id: 3, image: images[2] }].map(({ id, image }) => (
+              <React.Fragment key={id}>
                 <View style={[styles.option, { width: width * 0.8 }]}>
                   <Checkbox
                     style={styles.checkbox}
-                    value={checkboxStates[key]}
-                    onValueChange={() => handleCheckboxChange(key)}
-                    color={checkboxStates[key] ? 'green' : undefined}
+                    value={checkboxStates[id]}
+                    onValueChange={() => toggleCheckbox(id)}
+                    color={checkboxStates[id] ? 'green' : undefined}
                   />
                   <Image source={image} style={[styles.image, { width: width * 0.5 }]} resizeMode="contain" />
                 </View>
@@ -221,10 +149,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     marginBottom: 20,
   },
-
   button: {
     borderRadius: 10,
-
     // Add these lines to add shading
     shadowColor: "#000",
     shadowOffset: {
@@ -237,5 +163,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: 'bold'
-},
+  },
+  load_container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
