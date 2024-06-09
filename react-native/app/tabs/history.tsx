@@ -65,7 +65,7 @@ export default function History() {
           
           <WhiteBox width={width * 0.9} height={height * 0.6} innerContainerPadding={0} borderRadius={0}>
             <ScrollView>
-              {transactions.map((transaction, index) => (
+              {transactions.reverse().map((transaction, index) => (
                 <View key={index} style={styles.row}>
                   <View style={styles.cell}>
                     <Text>{transaction.date}</Text>
