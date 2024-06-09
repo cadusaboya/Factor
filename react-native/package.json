@@ -1,6 +1,6 @@
 {
   "name": "my-app",
-  "main": "app.tsx",
+  "main": "App.tsx",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
