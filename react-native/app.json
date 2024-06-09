@@ -1,6 +1,6 @@
 {
   "expo": {
-    "main": "app/app.tsx",
+    "main": "app.tsx",
     "name": "my-app",
     "slug": "my-app",
     "version": "1.0.0",
