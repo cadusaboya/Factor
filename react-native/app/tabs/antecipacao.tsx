@@ -81,7 +81,13 @@ export default function Antecipacao() {
 
       <View style={styles.box}>
         <WhiteBox width={width * 0.9} height={height * 0.4}>
-          <Text style={styles.textBox}>{incompleteTasks.length} antecipações disponíveis </Text>
+          <Text style={styles.textBox}>
+            {incompleteTasks.length === 0
+              ? "Nenhuma antecipação disponível"
+              : incompleteTasks.length === 1
+              ? `${incompleteTasks.length} antecipação disponível`
+              : `${incompleteTasks.length} antecipações disponíveis`}
+          </Text>
           <Divider style={styles.divider} />
           <ScrollView>
             {incompleteTasks.map((task, index) => (
