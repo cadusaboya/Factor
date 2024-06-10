@@ -76,7 +76,8 @@ const Login = () => {
             value={value}
             onBlur={onBlur}
             onChangeText={onChange}
-            returnKeyType="next"
+            secureTextEntry
+            returnKeyType="done"
           />
           )}
         />

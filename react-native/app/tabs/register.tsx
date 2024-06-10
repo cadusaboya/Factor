@@ -71,6 +71,7 @@ const Register = () => {
               value={value}
               onBlur={onBlur}
               onChangeText={onChange}
+              secureTextEntry
               returnKeyType="next"
             />
             )}
