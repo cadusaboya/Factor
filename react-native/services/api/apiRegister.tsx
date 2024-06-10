@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 import { API_URL } from '@/constants/apiUrl';
 
 // API Call to create a new user
-export const createUser = async (data) => {
+export const createUser = async (data: FormData) => {
   try {
     const res = await axios.post(`${API_URL}/accounts/register/`, data);
     return res.data;

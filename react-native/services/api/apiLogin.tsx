@@ -2,13 +2,8 @@ import axios from 'axios';
 import { Alert } from 'react-native';
 import { API_URL } from '@/constants/apiUrl';
 
-interface LoginData {
-  username: string;
-  password: string;
-}
-
 // API Call to log in user
-export const loginUser = async (data: LoginData) => {
+export const loginUser = async (data: FormData) => {
   try {
     const res = await axios.post(`${API_URL}/accounts/login/`, data);
     return res.data.token; // Return user token

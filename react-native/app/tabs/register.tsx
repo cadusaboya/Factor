@@ -3,25 +3,35 @@ import { View, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, Dimension
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import SupportButton from '@/components/SupportButton';
-import useRegisterLogic from '@/hooks/useRegisterLogic';
+import {useForm, Controller} from 'react-hook-form';
+import { createUser } from '@/services/api/apiRegister';
+import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 const Register = () => {
-  const { 
-    onSubmit, 
-    isButtonDisabled, 
-    setValue, 
-    usernameRef, 
-    passwordRef, 
-    repeatPasswordRef, 
-    fullnameRef, 
-    cpfRef, 
-    telefoneRef, 
-    emailRef, 
-    errors, 
-    handleSubmit 
-  } = useRegisterLogic();
+    const {
+      control,
+      handleSubmit,
+      watch,
+      formState:  {
+        errors
+      }
+    } = useForm();
+    const password = watch('password');
+    const navigation = useNavigation();
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+    const onSubmit = async (data: FormData) => {
+      try {
+          setIsButtonDisabled(true);
+          await createUser(data);
+          navigation.goBack();
+      } finally {
+        setIsButtonDisabled(false);
+        }
+    };
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -29,99 +39,141 @@ const Register = () => {
         contentContainerStyle={styles.scrollViewContent}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.box}>
-          <TextInput
+      <View style={styles.box}>
+        <Controller
+          name='username'
+          control={control}
+          rules={{required: true}}
+          render={({field: {onChange, onBlur, value}}) => (
+            <TextInput
             label="Usuário"
             style={[styles.input, errors.username && styles.inputError]}
-            textContentType="oneTimeCode"
-            onChangeText={(text) => setValue('username', text)}
+            value={value}
+            onBlur={onBlur}
+            onChangeText={onChange}
             returnKeyType="next"
-            onSubmitEditing={() => passwordRef.current.focus()}
-            blurOnSubmit={false}
-            ref={usernameRef}
           />
-          {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
+          )}
+        />
+
+          {errors.username && <Text style={styles.errorText}>Campo obrigatório</Text>}
         </View>
 
         <View style={styles.box}>
-          <TextInput
-            label="Senha"
-            style={[styles.input, errors.password && styles.inputError]}
-            onChangeText={(text) => setValue('password', text)}
-            secureTextEntry={true}
-            textContentType="oneTimeCode"
-            returnKeyType="next"
-            onSubmitEditing={() => repeatPasswordRef.current.focus()}
-            blurOnSubmit={false}
-            ref={passwordRef}
+          <Controller
+            name='password'
+            control={control}
+            rules={{required: true}}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+              label="Senha"
+              style={[styles.input, errors.password && styles.inputError]}
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              returnKeyType="next"
+            />
+            )}
           />
-          {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
-        </View>
+          {errors.password && <Text style={styles.errorText}>Campo obrigatório</Text>}
+        </View> 
 
         <View style={styles.box}>
-          <TextInput
-            label="Confirmar Senha"
-            style={[styles.input, errors.repeat_password && styles.inputError]}
-            onChangeText={(text) => setValue('repeat_password', text)}
-            secureTextEntry={true}
-            textContentType="oneTimeCode"
-            returnKeyType="next"
-            onSubmitEditing={() => fullnameRef.current.focus()}
-            blurOnSubmit={false}
-            ref={repeatPasswordRef}
+          <Controller
+            name='repeat_password'
+            control={control}
+            rules={{required: {value: true, message: 'Campo obrigatório'}, 
+                    validate: (value) => value === password || 'As senhas não coincidem'}}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+                label="Repetir Senha"
+                style={[styles.input, errors.repeat_password && styles.inputError]}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                secureTextEntry
+                returnKeyType="next"
+              />
+            )}
           />
           {errors.repeat_password && <Text style={styles.errorText}>{errors.repeat_password.message}</Text>}
         </View>
 
         <View style={styles.box}>
-          <TextInput
-            label="Nome Completo"
-            style={[styles.input, errors.fullname && styles.inputError]}
-            onChangeText={(text) => setValue('fullname', text)}
-            returnKeyType="next"
-            onSubmitEditing={() => cpfRef.current.focus()}
-            blurOnSubmit={false}
-            ref={fullnameRef}
+          <Controller
+            name='fullname'
+            control={control}
+            rules={{required: true}}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+                label="Nome Completo"
+                style={[styles.input, errors.fullname && styles.inputError]}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                returnKeyType="next"
+              />
+            )}
           />
-          {errors.fullname && <Text style={styles.errorText}>{errors.fullname.message}</Text>}
+          {errors.fullname && <Text style={styles.errorText}>Campo obrigatório</Text>}
         </View>
 
         <View style={styles.box}>
-          <TextInput
-            label="CPF"
-            style={[styles.input, errors.cpf && styles.inputError]}
-            onChangeText={(text) => setValue('cpf', text)}
-            returnKeyType="next"
-            onSubmitEditing={() => telefoneRef.current.focus()}
-            blurOnSubmit={false}
-            ref={cpfRef}
+          <Controller
+            name='cpf'
+            control={control}
+            rules={{required: true, pattern: /^\d{11}$/}}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+                label="CPF"
+                style={[styles.input, errors.cpf && styles.inputError]}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                returnKeyType="next"
+              />
+            )}
           />
-          {errors.cpf && <Text style={styles.errorText}>{errors.cpf.message}</Text>}
+          {errors.cpf && <Text style={styles.errorText}>CPF inválido</Text>}
         </View>
 
         <View style={styles.box}>
-          <TextInput
-            label="Telefone"
-            style={[styles.input, errors.telefone && styles.inputError]}
-            onChangeText={(text) => setValue('telefone', text)}
-            returnKeyType="next"
-            onSubmitEditing={() => emailRef.current.focus()}
-            blurOnSubmit={false}
-            ref={telefoneRef}
+          <Controller
+            name='telefone'
+            control={control}
+            rules={{required: true, pattern: /^\d{11}$/}}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+                label="Telefone"
+                style={[styles.input, errors.telefone && styles.inputError]}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                returnKeyType="next"
+              />
+            )}
           />
-          {errors.telefone && <Text style={styles.errorText}>{errors.telefone.message}</Text>}
+          {errors.telefone && <Text style={styles.errorText}>Telefone inválido</Text>}
         </View>
 
         <View style={styles.box}>
-          <TextInput
-            label="E-mail"
-            style={[styles.input, errors.email && styles.inputError]}
-            onChangeText={(text) => setValue('email', text)}
-            keyboardType="email-address"
-            returnKeyType="done"
-            ref={emailRef}
+          <Controller
+            name='email'
+            control={control}
+            rules={{required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/}}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+                label="Email"
+                style={[styles.input, errors.email && styles.inputError]}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                keyboardType="email-address"
+                returnKeyType="done"
+              />
+            )}
           />
-          {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
+          {errors.email && <Text style={styles.errorText}>Email inválido</Text>}
         </View>
 
         <View style={styles.buttonContainer}>

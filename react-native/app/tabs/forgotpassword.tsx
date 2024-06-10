@@ -1,48 +1,77 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions, Text } from 'react-native';
+import { useState } from 'react';
+import { View, StyleSheet, Dimensions, Text, Alert } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import useForgotPasswordLogic from '@/hooks/useForgotPasswordLogic';
+import {useForm, Controller} from 'react-hook-form';
+import { useNavigation } from '@react-navigation/native';
+import { sendPasswordResetRequest } from '@/services/api/apiForgotPassword';
+import SupportButton from '@/components/SupportButton';
 
 const { width, height } = Dimensions.get('window');
 
 export default function ForgotPassword() {
-  const { 
-    onSubmit, 
-    isButtonDisabled, 
-    setValue, 
-    usernameRef, 
-    emailRef, 
-    errors, 
-    handleSubmit 
-  } = useForgotPasswordLogic();
+  const {
+    control,
+    handleSubmit,
+    formState:  {
+      errors
+    }
+  } = useForm();
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const navigation = useNavigation();
 
+  const onSubmit = async (data: FormData) => {
+    try {
+      setIsButtonDisabled(true);
+      await sendPasswordResetRequest(data);
+      Alert.alert('E-mail enviado', 'Verifique sua caixa de spam ou de entrada para redefinir sua senha');
+      navigation.goBack();
+    } catch (error) {
+      setIsButtonDisabled(false);
+    }
+  };
+  
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <TextInput
-          label="Usuário"
-          style={[styles.input, errors.username && styles.inputError]}
-          onChangeText={(text) => setValue('username', text)}
-          returnKeyType="next"
-          onSubmitEditing={() => emailRef.current.focus()}
-          blurOnSubmit={false}
-          ref={usernameRef}
+        <Controller
+          name='username'
+          control={control}
+          rules={{required: true}}
+          render={({field: {onChange, onBlur, value}}) => (
+            <TextInput
+            label="Usuário"
+            style={[styles.input, errors.username && styles.inputError]}
+            value={value}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            returnKeyType="next"
+          />
+          )}
         />
-        {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
-      </View>
+          {errors.username && <Text style={styles.errorText}>Campo obrigatório</Text>}
+        </View>
 
-      <View style={styles.box}>
-        <TextInput
-          label="E-mail"
-          style={[styles.input, errors.email && styles.inputError]}
-          onChangeText={(text) => setValue('email', text)}
-          keyboardType="email-address"
-          returnKeyType="done"
-          ref={emailRef}
-        />
-        {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
-      </View>
+        <View style={styles.box}>
+          <Controller
+            name='email'
+            control={control}
+            rules={{required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/}}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+                label="Email"
+                style={[styles.input, errors.email && styles.inputError]}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                keyboardType="email-address"
+                returnKeyType="done"
+              />
+            )}
+          />
+          {errors.email && <Text style={styles.errorText}>Email inválido</Text>}
+        </View>
 
       <View style={styles.buttonContainer}>
         <ButtonSolid
@@ -53,6 +82,7 @@ export default function ForgotPassword() {
           style={styles.button}
         />
       </View>
+      <SupportButton />
     </View>
   );
 }
