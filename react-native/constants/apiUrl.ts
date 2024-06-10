@@ -1,2 +1,2 @@
 // API URL
-export const API_URL = 'https://factor-cadusaboya.loca.lt';
+export const API_URL = 'https://api.factorpa.xyz';
