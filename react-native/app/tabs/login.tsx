@@ -55,7 +55,7 @@ const Login = () => {
           style={[styles.input, errors.username && styles.inputError]}
           value={value}
           onBlur={onBlur}
-          onChangeText={onChange}
+          onChangeText={(text) => onChange(text.toLowerCase())}
           returnKeyType="next"
         />
         )}
