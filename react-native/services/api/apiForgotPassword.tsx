@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 import { API_URL } from '@/constants/apiUrl';
 
 // API Call to send password reset request
-export const sendPasswordResetRequest = async (data: { username: string; email: string; }) => {
+export const sendPasswordResetRequest = async (data: FormData) => {
   try {
     const response = await axios.post(`${API_URL}/accounts/password_reset/`, data);
     return response.data;

@@ -2,41 +2,85 @@ import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ButtonSolid } from 'react-native-ui-buttons';
-import SupportButton from '@/components/SupportButton';
-import useLoginLogic from '@/hooks/useLoginLogic';
+import {useForm, Controller} from 'react-hook-form';
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { loginUser } from '@/services/api/apiLogin';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import navigate from '@/services/navigate';
+import SupportButton from '@/components/SupportButton';
 
 const { width, height } = Dimensions.get('window');
 
 const Login = () => {
-  const { onSubmit, isButtonDisabled, setValue, usernameRef, passwordRef, errors, handleSubmit } = useLoginLogic();
+  const {
+    control,
+    handleSubmit,
+    formState:  {
+      errors
+    }
+  } = useForm();
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const navigation = useNavigation();
+  const { login } = useAuth();
   const { handleNavigate } = navigate();
+
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      setIsButtonDisabled(true);
+      const token = await loginUser(data); // Try logging in
+      await login(token); // Save token on Auth
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        })
+      );
+    } catch (error) {
+      setIsButtonDisabled(false); // Set the button back to enabled if login fails
+      }
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <TextInput
+      <Controller
+        name='username'
+        control={control}
+        rules={{required: true}}
+        render={({field: {onChange, onBlur, value}}) => (
+          <TextInput
           label="Usuário"
           style={[styles.input, errors.username && styles.inputError]}
-          onChangeText={(text: string) => setValue('username', text)}
+          value={value}
+          onBlur={onBlur}
+          onChangeText={onChange}
           returnKeyType="next"
-          onSubmitEditing={() => passwordRef.current.focus()}
-          blurOnSubmit={false}
-          ref={usernameRef}
         />
-        {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
+        )}
+      />
+
+        {errors.username && <Text style={styles.errorText}>Campo obrigatório</Text>}
       </View>
 
       <View style={styles.box}>
-        <TextInput
-          label="Senha"
-          style={[styles.input, errors.password && styles.inputError]}
-          onChangeText={(text: string) => setValue('password', text)}
-          secureTextEntry={true}
-          returnKeyType="done"
-          ref={passwordRef}
+        <Controller
+          name='password'
+          control={control}
+          rules={{required: true}}
+          render={({field: {onChange, onBlur, value}}) => (
+            <TextInput
+            label="Senha"
+            style={[styles.input, errors.password && styles.inputError]}
+            value={value}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            returnKeyType="next"
+          />
+          )}
         />
-        {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
+        {errors.password && <Text style={styles.errorText}>Campo obrigatório</Text>}
         <TouchableOpacity onPress={() => handleNavigate('Esqueci minha senha')}>
           <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
         </TouchableOpacity>
