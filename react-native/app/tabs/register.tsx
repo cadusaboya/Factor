@@ -7,6 +7,8 @@ import {useForm, Controller} from 'react-hook-form';
 import { createUser } from '@/services/api/apiRegister';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import PrivacyPolicy from '@/components/PrivacyPolicy';
+import Checkbox from 'expo-checkbox';
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,6 +24,7 @@ const Register = () => {
     const password = watch('password');
     const navigation = useNavigation();
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+    const [isChecked, setIsChecked] = useState(false);
 
     const onSubmit = async (data: FormData) => {
       try {
@@ -177,6 +180,18 @@ const Register = () => {
           {errors.email && <Text style={styles.errorText}>Email inválido</Text>}
         </View>
 
+        
+        <PrivacyPolicy />
+        <View style={styles.checkboxContainer}>
+          <Checkbox
+            value={isChecked}
+            onValueChange={setIsChecked}
+            style={styles.checkbox}
+            color={isChecked ? 'green' : undefined}
+          />
+          <Text style={styles.label}>Eu li e concordo com a Política de Privacidade</Text>
+        </View>
+
         <View style={styles.buttonContainer}>
           <ButtonSolid
             title={'Criar Conta'}
@@ -184,7 +199,7 @@ const Register = () => {
             onPress={handleSubmit(onSubmit)}
             style={styles.button}
             textStyle={styles.buttonText}
-            disabled={isButtonDisabled}
+            disabled={isButtonDisabled || !isChecked}
           />
         </View>
       </ScrollView>
@@ -222,7 +237,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   buttonContainer: {
-    marginVertical: height * 0.05, // 5% of screen height
+    marginVertical: height * 0.02, // 5% of screen height
     marginHorizontal: width * 0.2, // 20% of screen width
   },
 
@@ -245,6 +260,19 @@ const styles = StyleSheet.create({
 
   buttonText: {
     fontWeight: 'bold',
+  },
+
+  checkboxContainer: {
+    flexDirection: 'row',
+    marginTop: height * 0.02,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkbox: {
+    alignSelf: 'center',
+  },
+  label: {
+    margin: height * 0.01,
   },
 });
 
