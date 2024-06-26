@@ -1,7 +1,7 @@
 # myapp/admin.py
 
 from django.contrib import admin
-from .models import User, Hospital, UserRequest
+from .models import User, Hospital, UserRequest, UserDeleteRequest
 
 class UserRequestAdmin(admin.ModelAdmin):
     list_display = ['user', 'status']
@@ -28,5 +28,6 @@ class UserRequestAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UserRequest, UserRequestAdmin)
+admin.site.register(UserDeleteRequest)
 admin.site.register(User)
 admin.site.register(Hospital)
