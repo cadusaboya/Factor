@@ -7,6 +7,7 @@ import { useNavigation, CommonActions } from '@react-navigation/native';
 import { ButtonSolid } from 'react-native-ui-buttons';
 import { fetchUserProfile } from '@/services/api/apiProfile';
 import { useAuth } from '@/hooks/useAuth';
+import { requestDeletion } from '@/services/api/apiDeleteAccount';
 import { handleServerError } from '@/services/handleServerError';
 
 const { width } = Dimensions.get('window');
@@ -45,6 +46,46 @@ export default function Profile() {
               index: 0,
               routes: [{ name: 'Welcome' }],
             }));},},]);
+      };
+
+      const handleDelete = () => {
+        Alert.alert(
+          'Deletar conta',
+          'Tem certeza? Após confirmar a solitação, sua conta será deletada permanentemente e seu acesso desabilitado.',
+          [
+            {
+              text: 'No',
+              onPress: () => {},
+              style: 'cancel',
+            },
+            {
+              text: 'Yes',
+              onPress: async () => {
+                setIsButtonDisabled(true);
+                try {
+                  await requestDeletion(token);
+                  Alert.alert('Sucesso', 'Seu pedido foi enviado ao suporte, em até 24 horas os dados serão deletados e voce será informado', [
+                    {
+                      text: 'OK',
+                      onPress: () => {
+                        setIsButtonDisabled(false);
+                        navigation.dispatch(
+                          CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: 'Welcome' }],
+                          })
+                        );
+                      },
+                    },
+                  ]);
+                } catch(error) {
+                  handleServerError(logout, navigation);
+                } 
+              },
+            },
+          ],
+          { cancelable: false }
+        );
       };
 
   if (!userData) {
@@ -100,6 +141,14 @@ export default function Profile() {
           style={styles.button}
           textStyle={styles.buttonText}
         />
+        <ButtonSolid
+          title={'Deletar conta'}
+          useColor={'rgb(200, 0, 0)'}
+          onPress={handleDelete}
+          disabled={isButtonDisabled}
+          style={styles.buttonDelete}
+          textStyle={styles.buttonText}
+        />
       </View>
     </View>
   );
@@ -133,6 +182,20 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: width * 0.1,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  buttonDelete: {
+    borderRadius: width * 0.1,
+    width: width * 0.40,
+    alignSelf: 'center',
+    marginTop: width * 0.05,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
