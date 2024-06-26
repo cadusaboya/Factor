@@ -72,10 +72,12 @@ export default function Antecipacao() {
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <WhiteBox width={width * 0.9} height={height * 0.11}>
+        <WhiteBox width={width * 0.9} height={height * 0.13}>
           <Text style={styles.textBox}>Saldo sendo antecipado: </Text>
           <Divider />
-          <Text style={styles.text}>R$ {calculateResult().toFixed(2)}</Text>
+          <View style={styles.textView}>
+            <Text style={styles.text}>R$ {calculateResult().toFixed(2)}</Text>
+          </View>
         </WhiteBox>
       </View>
 
@@ -109,10 +111,12 @@ export default function Antecipacao() {
       </View>
 
       <View style={styles.box}>
-        <WhiteBox width={width * 0.9} height={height * 0.11}>
+        <WhiteBox width={width * 0.9} height={height * 0.13}>
           <Text style={styles.textBox}>Valor a ser creditado na conta: </Text>
           <Divider />
-          <Text style={styles.text}>R$ {(calculateResult() * 0.94).toFixed(2)}</Text>
+          <View style={styles.textView}>
+            <Text style={styles.text}>R$ {(calculateResult() * 0.94).toFixed(2)}</Text>
+          </View>
         </WhiteBox>
       </View>
 
@@ -150,7 +154,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   box: {
-    marginVertical: height * 0.02,
+    marginVertical: height * 0.01,
   },
   but: {
     marginVertical: height * 0.01,
@@ -158,6 +162,10 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: width * 0.08,
+  },
+  textView: {
+    justifyContent: 'center',
+    height: height * 0.065,
   },
   textBox: {
     fontSize: width * 0.045,
