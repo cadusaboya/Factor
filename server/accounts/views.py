@@ -17,7 +17,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode # typ
 from django.utils.encoding import force_bytes # type: ignore
 from django.core.mail import send_mail # type: ignore
 from django.http import JsonResponse # type: ignore
-from .models import User
+from .models import User, UserDeleteRequest
 from django.contrib.auth.tokens import PasswordResetTokenGenerator # type: ignore
 
 @api_view(['POST'])
@@ -135,4 +135,11 @@ def set_new_password(request, uidb64, token):
         return JsonResponse({'message': 'Password has been reset'}, status=200)
     else:
         return JsonResponse({'error': 'Invalid token'}, status=405)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_user_request(request):
+    user = request.user
+    UserDeleteRequest.objects.create(user=user)
+    return JsonResponse({'message': 'Request created successfully'}, status=201)
     

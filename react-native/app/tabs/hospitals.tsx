@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert, Image, ActivityIndicator, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, Image, ActivityIndicator, Dimensions } from 'react-native';
 import { Text } from '@rneui/themed';
 import Checkbox from 'expo-checkbox';
 import WhiteBox from '@/components/whiteBox';
@@ -8,8 +8,10 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchUserHospitals, createUserRequest } from '@/services/api/apiHospitals';
 import { useCheckboxStates } from '@/hooks/useCheckboxStates';
-import  preloadImages  from '@/services/preloadImages';
+import preloadImages from '@/services/preloadImages';
 import { handleServerError } from '@/services/handleServerError';
+
+const { width, height } = Dimensions.get('window');
 
 const images = [
   require('@/assets/images/PD.png'),
@@ -19,18 +21,15 @@ const images = [
 
 export default function Hospitals() {
   const navigation = useNavigation();
-  const { width, height } = useWindowDimensions();
-  const { token, logout } = useAuth(); // Retrieve the token using the useAuth hook
+  const { width, height } = Dimensions.get('window');
+  const { token, logout } = useAuth();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(true); 
   const { checkboxStates, toggleCheckbox } = useCheckboxStates([]);
 
-
   useEffect(() => {
-    // Preload images
     preloadImages(images);
 
-    // Fetch the hospitals user already work on
     const fetchHospitals = async () => {
       try {
         const hospitalIds = await fetchUserHospitals(token);
@@ -48,17 +47,14 @@ export default function Hospitals() {
   const handleButtonPress = async () => {
     setIsButtonDisabled(true);
 
-    // Get the hospitals selected by the user
     const selectedHospitals = Object.keys(checkboxStates).filter(id => checkboxStates[id]);
 
-    // Check if at least one hospital is selected
     if (selectedHospitals.length === 0) {
       Alert.alert('Erro', 'Por favor, selecione ao menos um hospital');
       setIsButtonDisabled(false);
       return;
     }
 
-    // Create user request
     try {
       await createUserRequest(token, selectedHospitals, navigation);
     } finally {
@@ -85,14 +81,14 @@ export default function Hospitals() {
           <WhiteBox width={width * 0.9} height={height * 0.6}>
             {[{ id: 1, image: images[1] }, { id: 2, image: images[0] }, { id: 3, image: images[2] }].map(({ id, image }) => (
               <React.Fragment key={id}>
-                <View style={[styles.option, { width: width * 0.8 }]}>
+                <View style={[styles.option, { height: height * 0.1 }]}>
                   <Checkbox
                     style={styles.checkbox}
                     value={checkboxStates[id]}
                     onValueChange={() => toggleCheckbox(id)}
                     color={checkboxStates[id] ? 'green' : undefined}
                   />
-                  <Image source={image} style={[styles.image, { width: width * 0.5 }]} resizeMode="contain" />
+                  <Image source={image} style={[styles.image, { width: width * 0.5, height: height * 0.08 }]} resizeMode="contain" />
                 </View>
                 <View style={styles.divider} />
               </React.Fragment>
@@ -105,9 +101,9 @@ export default function Hospitals() {
             title={'Atualizar'}
             useColor={'rgb(0, 0, 0)'}
             onPress={handleButtonPress}
-            disabled={isButtonDisabled}  // Disable the button based on state
-            style={styles.button}
-            borderRadius={width * 0.1}
+            disabled={isButtonDisabled}
+            style={ styles.button }
+            borderRadius={ width * 0.1 }
             textStyle={styles.buttonText}
           />
         </View>
@@ -116,6 +112,8 @@ export default function Hospitals() {
   );
 }
 
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -123,35 +121,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    height: 60,
+    height: height * 0.08,
   },
   option: {
     flexDirection: 'row', // Align items horizontally
-    height: 80,
+    height: height * 0.1,
   },
   box: {
-    marginVertical: 20,
+    marginVertical: height * 0.02,
   },
   but: {
-    marginTop: 20,
-    borderRadius: 1,
+    marginTop: height * 0.02,
+    borderRadius: width * 0.01,
   },
   head: {
     textAlign: 'center',
-    marginTop: 50,
+    marginTop: height * 0.05,
+    fontSize: width * 0.06,
   },
   checkbox: {
-    marginVertical: 20,
-    marginRight: 20,
+    marginVertical: height * 0.02,
+    marginRight: width * 0.05,
   },
   divider: {
-    height: 0.3,
+    height: 0.5,
     backgroundColor: 'black',
-    marginBottom: 20,
+    marginBottom: height * 0.02,
   },
   button: {
-    borderRadius: 10,
-    // Add these lines to add shading
+    borderRadius: width * 0.1,
     shadowColor: "#000",
     shadowOffset: {
         width: 0,

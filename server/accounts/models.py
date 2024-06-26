@@ -49,3 +49,15 @@ class UserRequest(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Request"
+    
+class UserDeleteRequest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    )
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
+    def __str__(self):
+        return f"{self.user.username}'s Request"
