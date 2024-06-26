@@ -1,14 +1,16 @@
 {
   "expo": {
     "main": "App.tsx",
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "factor",
+    "slug": "factor",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "permissions": ["network"],
+    "permissions": [
+      "network"
+    ],
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -19,9 +21,10 @@
       "infoPlist": {
         "NSAppTransportSecurity": {
           "allowsArbitraryLoads": true
-          }
         }
       },
+      "bundleIdentifier": "com.cadusaboya.factor"
+    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -38,6 +41,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "c009f2e8-a10f-45e0-85c0-1c5f90a07460"
+      }
     }
   }
 }
