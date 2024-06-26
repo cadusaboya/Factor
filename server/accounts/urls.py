@@ -8,6 +8,7 @@ urlpatterns = [
     path('user/cash/', views.user_cash, name='cash'),
     path('user/requests/', views.submit_request, name='submit_request'),
     path('user/hospitals/', views.user_hospitals, name='user_hospitals'),
+    path('user/delete-request/', views.delete_user_request, name='delete_user_request'),
     path('password_reset/', views.password_reset, name='password_reset'),
     path('reset-password/<uidb64>/<token>/', views.set_new_password, name='set_new_password'),
 ]
