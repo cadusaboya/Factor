@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { requestDeletion } from '@/services/api/apiDeleteAccount';
 import { handleServerError } from '@/services/handleServerError';
 
-const { width } = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
 
 export default function Profile() {
   const navigation = useNavigation();
@@ -165,19 +165,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   table: {
-    marginTop: width * 0.1,
+    marginTop: height * 0.05,
     borderRadius: width * 0.3,
   },
   nome: {
-    marginTop: width * 0.1,
+    marginTop: height * 0.05,
     alignItems: 'center',
   },
   nombre: {
     fontSize: width * 0.06,
-    marginTop: width * 0.03,
+    marginTop: height * 0.015,
   },
   but: {
-    marginVertical: width * 0.25,
+    marginVertical: height * 0.04,
     marginHorizontal: width * 0.1,
   },
   button: {
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.1,
     width: width * 0.40,
     alignSelf: 'center',
-    marginTop: width * 0.05,
+    marginTop: height * 0.03,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
