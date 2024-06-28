@@ -238,27 +238,34 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginVertical: height * 0.02, // 5% of screen height
-    marginHorizontal: width * 0.2, // 20% of screen width
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   button: {
-    height: height * 0.07, // 7% of screen height
-    justifyContent: 'center',
+    width: width * 0.6, // Adjust button width to 80% of screen width
+    height: height * 0.06, // 7% of screen height
+    backgroundColor: '#1c1b1b',
     alignItems: 'center',
-    borderRadius: 10,
+    justifyContent: 'center',
+    borderRadius: 20,
+    marginBottom: height * 0.015, // 1.5% of screen height
+    paddingHorizontal: width * 0.05, // 5% of screen width
+    paddingVertical: height * 0.01, // 1% of screen height
 
-      // Add these lines to add shading
-      shadowColor: "#000",
-      shadowOffset: {
-          width: 0,
-          height: 2,
-      },
-      shadowOpacity: 0.3,
-      shadowRadius: 3.84,
-      elevation: 5,
+    // Add these lines to add shading
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-
   buttonText: {
+    color: 'white',
+    fontSize: width * 0.04, // Font size based on screen width
     fontWeight: 'bold',
   },
 
