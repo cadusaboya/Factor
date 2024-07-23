@@ -1,7 +1,7 @@
 {
   "expo": {
     "main": "App.tsx",
-    "name": "factor",
+    "name": "Factor",
     "slug": "factor",
     "version": "1.0.0",
     "orientation": "portrait",
